@@ -10,6 +10,8 @@ function App() {
       <Login />
       <hr style={{ margin: '40px 0' }}/>
       <Register />
+
+      
     </div>
   );
 }
