@@ -1,0 +1,278 @@
+.vehicle-map-container {
+  padding: 30px;
+  background-color: #f5f7fb;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.map-header {
+  background-color: white;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.map-header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #222;
+}
+
+.map-header p {
+  margin: 8px 0 0;
+  color: #666;
+}
+
+.map-content {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.vehicle-list {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.vehicle-list h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.vehicle-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  margin-bottom: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.vehicle-item:hover {
+  background-color: #f5f7fb;
+}
+
+.vehicle-item.selected {
+  border: 2px solid #333;
+  background-color: #f1f1f1;
+}
+
+.vehicle-icon {
+  font-size: 28px;
+}
+
+.vehicle-details h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
+}
+
+.vehicle-details p {
+  margin: 0 0 6px;
+  color: #777;
+  font-size: 13px;
+}
+
+.map-status {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.map-status.available {
+  background-color: #e6f7e9;
+  color: #218838;
+}
+
+.map-status.rented {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.map-status.reserved {
+  background-color: #e7e7ff;
+  color: #4545a5;
+}
+
+.map-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.map-placeholder {
+  position: relative;
+  height: 480px;
+  overflow: hidden;
+  border-radius: 12px;
+  background-color: #e8edf1;
+  border: 1px solid #d5dadd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.map-title {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 5;
+  background-color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.map-road {
+  position: absolute;
+  background-color: white;
+  border: 3px solid #d6d6d6;
+}
+
+.road-one {
+  width: 120%;
+  height: 45px;
+  top: 35%;
+  left: -10%;
+  transform: rotate(-15deg);
+}
+
+.road-two {
+  width: 100%;
+  height: 40px;
+  top: 65%;
+  left: 5%;
+  transform: rotate(20deg);
+}
+
+.road-three {
+  width: 45px;
+  height: 120%;
+  left: 50%;
+  top: -10%;
+  transform: rotate(12deg);
+}
+
+.map-marker {
+  position: absolute;
+  z-index: 10;
+  border: none;
+  background-color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+.map-marker:hover {
+  transform: scale(1.15);
+}
+
+.marker-1 {
+  top: 25%;
+  left: 30%;
+}
+
+.marker-2 {
+  top: 55%;
+  left: 65%;
+}
+
+.marker-3 {
+  top: 35%;
+  left: 75%;
+}
+
+.marker-4 {
+  top: 70%;
+  left: 25%;
+}
+
+.selected-vehicle {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.selected-vehicle h2 {
+  margin: 0 0 5px;
+}
+
+.selected-vehicle p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.location-info {
+  margin-top: 15px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.location-table-section {
+  background-color: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+.location-table-section h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.location-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.location-table th,
+.location-table td {
+  padding: 13px;
+  text-align: left;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.location-table th {
+  background-color: #f5f7fb;
+  font-weight: 600;
+}
+
+.location-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+@media (max-width: 900px) {
+  .map-content {
+    grid-template-columns: 1fr;
+  }
+
+  .location-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .vehicle-map-container {
+    padding: 15px;
+  }
+
+  .map-header h1 {
+    font-size: 22px;
+  }
+
+  .map-placeholder {
+    height: 350px;
+  }
+}

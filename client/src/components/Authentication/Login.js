@@ -1,51 +1,73 @@
-import React, { useState } from 'react';
-const Login = () => {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: ''
-    });
+import React, { useState } from "react";
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Login Submitted:', formData);
-    };
+  const handleLogin = (e) => {
+    e.preventDefault();
 
-    return (
-        <div style={{ maxwidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
-            <h1>Customer Login</h1>
-            <form onSubmit={handleSubmit}>
-                <div style={{marginBottom: '15px' }}>
-                    <label>Email Address:</label>
-                    <input
-                      type = "email"
-                      name = "email"
-                      value = {formData.email}
-                      onChange = {handleChange}
-                      required
-                      style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-                    />
-                </div>
-                <div stye={{marginBottom: '15px' }}>
-                    <label>Password:</label>
-                    <input 
-                      type = "password"
-                      name = "password"
-                      value = {formData.password}
-                      onchange = {handleChange}
-                      required
-                      style={{width: '100%', padding: '8px', marginTop: '5px' }}
-                      />
-                </div>
-                <button type="submit" style={{ width: "100%", padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px'}}>
-                    Login
-                </button>
-            </form>
+    console.log("Email:", email);
+    console.log("Password:", password);
+
+    alert("Login button clicked");
+  };
+
+  return (
+    <div style={{ padding: "30px" }}>
+      <h2>Customer Login</h2>
+
+      <form onSubmit={handleLogin}>
+
+        <div style={{ marginBottom: "20px" }}>
+          <label>Email Address:</label>
+          <br />
+
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "8px",
+              boxSizing: "border-box"
+            }}
+          />
         </div>
-    );
-};
+
+        <div style={{ marginBottom: "20px" }}>
+          <label>Password:</label>
+          <br />
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "8px",
+              boxSizing: "border-box"
+            }}
+          />
+        </div>
+
+        <button
+          type="submit"
+          style={{
+            padding: "12px 25px",
+            cursor: "pointer"
+          }}
+        >
+          Login
+        </button>
+
+      </form>
+    </div>
+  );
+}
 
 export default Login;
