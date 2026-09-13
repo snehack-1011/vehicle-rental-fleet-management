@@ -6,7 +6,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     if (!name || !email || !password || !confirmPassword) {
@@ -19,16 +19,38 @@ function Register() {
       return;
     }
 
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Password:", password);
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password,
+          }),
+        }
+      );
 
-    alert("Registration successful!");
+      const data = await response.json();
 
-    setName("");
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
+      if (response.ok) {
+        alert("Registration successful!");
+
+        setName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+      } else {
+        alert(data.message || "Registration failed.");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("Unable to connect to the server.");
+    }
   };
 
   return (
@@ -36,7 +58,6 @@ function Register() {
       <h2>Customer Registration</h2>
 
       <form onSubmit={handleRegister}>
-
         <div style={{ marginBottom: "20px" }}>
           <label>Full Name:</label>
           <br />
@@ -50,7 +71,7 @@ function Register() {
               width: "100%",
               padding: "12px",
               marginTop: "8px",
-              boxSizing: "border-box"
+              boxSizing: "border-box",
             }}
           />
         </div>
@@ -68,7 +89,7 @@ function Register() {
               width: "100%",
               padding: "12px",
               marginTop: "8px",
-              boxSizing: "border-box"
+              boxSizing: "border-box",
             }}
           />
         </div>
@@ -86,7 +107,7 @@ function Register() {
               width: "100%",
               padding: "12px",
               marginTop: "8px",
-              boxSizing: "border-box"
+              boxSizing: "border-box",
             }}
           />
         </div>
@@ -104,7 +125,7 @@ function Register() {
               width: "100%",
               padding: "12px",
               marginTop: "8px",
-              boxSizing: "border-box"
+              boxSizing: "border-box",
             }}
           />
         </div>
@@ -113,12 +134,11 @@ function Register() {
           type="submit"
           style={{
             padding: "12px 25px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           Register
         </button>
-
       </form>
     </div>
   );

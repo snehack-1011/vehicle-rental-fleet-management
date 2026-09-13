@@ -1,16 +1,54 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log("Email:", email);
-    console.log("Password:", password);
+    if (!email || !password) {
+      alert("Please enter email and password.");
+      return;
+    }
 
-    alert("Login button clicked");
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Login successful!");
+
+        console.log("Logged in user:", data.user);
+
+        // Save user information in browser
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Go to Admin Dashboard for now
+        navigate("/admin");
+      } else {
+        alert(data.message || "Login failed.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Unable to connect to the server.");
+    }
   };
 
   return (
@@ -18,7 +56,6 @@ function Login() {
       <h2>Customer Login</h2>
 
       <form onSubmit={handleLogin}>
-
         <div style={{ marginBottom: "20px" }}>
           <label>Email Address:</label>
           <br />
@@ -32,7 +69,7 @@ function Login() {
               width: "100%",
               padding: "12px",
               marginTop: "8px",
-              boxSizing: "border-box"
+              boxSizing: "border-box",
             }}
           />
         </div>
@@ -50,7 +87,7 @@ function Login() {
               width: "100%",
               padding: "12px",
               marginTop: "8px",
-              boxSizing: "border-box"
+              boxSizing: "border-box",
             }}
           />
         </div>
@@ -59,12 +96,11 @@ function Login() {
           type="submit"
           style={{
             padding: "12px 25px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           Login
         </button>
-
       </form>
     </div>
   );
