@@ -1,88 +1,147 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const Register = () => {
-    const [formData, setFormData] = useState({
-        fullName: '',
-        email: '',
-        phone: '',
-        licenseNumber: '',
-        password: ''
-    });
+function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-    const handleChange = (e) => {
-        setFormData({...formData, [e.target.name]: e.target.value });
-    };
-    
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Register Submitted:', formData);
-    };
+  const handleRegister = async (e) => {
+    e.preventDefault();
 
-    return (
-        <div style={{ maxwidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
-            <h2>Customer Registration</h2>
-            <form onSubmit={handleSubmit}>
-                <div style={{ marginBottom: '10px' }}>
-                    <label>Full Name:</label>
-                    <input
-                      type = "text"
-                      name = "fullName"
-                      value = {formData.fullName}
-                      onChange = {handleChange}
-                      required
-                      style={{ width: '100%', padding: '8px', marginTop: '8px' }}
-                      />
-                </div>
-                <div style ={{ marginBottom: '10px' }}>
-                    <label>Email Address:</label>
-                    <input
-                      type = "email"
-                      name = "email"
-                      value = {formData.email}
-                      onChnage = {handleChange}
-                      required
-                      style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-                      />
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                    <label>Phone Number:</label>
-                    <input
-                      type = "tel"
-                      name = "phone"
-                      value = {formData.phone}
-                      onChnage = {handleChange}
-                      required
-                      style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-                      />
-                </div>
-                <div style={{ marginBottom: '10px' }}>
-                    <label>Driving License Number:</label>
-                    <input
-                      type = "text"
-                      name = "licenseNumber"
-                      value = {formData.licenseNumber}
-                      onChange = {handleChange}
-                      required
-                      style={{ width: "100%", padding: '8px', marginTop: '5px' }}
-                      />
-                </div>
-                <div style={{ marginBottom: '15px' }}>
-                    <label>Password:</label>
-                    <input
-                      type = "password"
-                      name = "password"
-                      value = {formData.password}
-                      onChange = {handleChange}
-                      required
-                      style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-                      />
-                </div>
-                <button type="submit" style={{ width: '100%', padding: '10px', backgroundColor: '#28a745', color: '#fff', border:'none', borderRadius: '4px' }}>
-                    Register
-                </button>
-            </form>
+    if (!name || !email || !password || !confirmPassword) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Registration successful!");
+
+        setName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+      } else {
+        alert(data.message || "Registration failed.");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("Unable to connect to the server.");
+    }
+  };
+
+  return (
+    <div style={{ padding: "30px" }}>
+      <h2>Customer Registration</h2>
+
+      <form onSubmit={handleRegister}>
+        <div style={{ marginBottom: "20px" }}>
+          <label>Full Name:</label>
+          <br />
+
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "8px",
+              boxSizing: "border-box",
+            }}
+          />
         </div>
-    );
-};
+
+        <div style={{ marginBottom: "20px" }}>
+          <label>Email Address:</label>
+          <br />
+
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "8px",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: "20px" }}>
+          <label>Password:</label>
+          <br />
+
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "8px",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: "20px" }}>
+          <label>Confirm Password:</label>
+          <br />
+
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm your password"
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "8px",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        <button
+          type="submit"
+          style={{
+            padding: "12px 25px",
+            cursor: "pointer",
+          }}
+        >
+          Register
+        </button>
+      </form>
+    </div>
+  );
+}
 
 export default Register;
