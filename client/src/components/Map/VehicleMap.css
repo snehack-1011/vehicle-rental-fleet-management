@@ -1,278 +1,618 @@
-.vehicle-map-container {
-  padding: 30px;
-  background-color: #f5f7fb;
+/* =========================================
+   VEHICLE MAP PAGE
+========================================= */
+
+.vehicle-map-page {
   min-height: 100vh;
+  padding: 30px;
+  background: #f5f7fa;
   box-sizing: border-box;
 }
 
+
+/* =========================================
+   HEADER
+========================================= */
+
 .map-header {
-  background-color: white;
-  padding: 25px;
-  border-radius: 12px;
-  margin-bottom: 25px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: white;
+  padding: 25px 30px;
+  border-radius: 14px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
 }
 
 .map-header h1 {
-  margin: 0;
+  margin: 0 0 8px;
   font-size: 28px;
-  color: #222;
+  color: #111827;
 }
 
 .map-header p {
-  margin: 8px 0 0;
+  margin: 0;
   color: #666;
+  font-size: 15px;
 }
 
-.map-content {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 25px;
-  margin-bottom: 25px;
-}
 
-.vehicle-list {
-  background-color: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
+/* =========================================
+   SIMULATE BUTTON
+========================================= */
 
-.vehicle-list h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-}
-
-.vehicle-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px;
-  margin-bottom: 12px;
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.vehicle-item:hover {
-  background-color: #f5f7fb;
-}
-
-.vehicle-item.selected {
-  border: 2px solid #333;
-  background-color: #f1f1f1;
-}
-
-.vehicle-icon {
-  font-size: 28px;
-}
-
-.vehicle-details h3 {
-  margin: 0 0 5px;
-  font-size: 16px;
-}
-
-.vehicle-details p {
-  margin: 0 0 6px;
-  color: #777;
-  font-size: 13px;
-}
-
-.map-status {
-  display: inline-block;
-  padding: 4px 9px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: bold;
-}
-
-.map-status.available {
-  background-color: #e6f7e9;
-  color: #218838;
-}
-
-.map-status.rented {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.map-status.reserved {
-  background-color: #e7e7ff;
-  color: #4545a5;
-}
-
-.map-area {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.map-placeholder {
-  position: relative;
-  height: 480px;
-  overflow: hidden;
-  border-radius: 12px;
-  background-color: #e8edf1;
-  border: 1px solid #d5dadd;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.map-title {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 5;
-  background-color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-.map-road {
-  position: absolute;
-  background-color: white;
-  border: 3px solid #d6d6d6;
-}
-
-.road-one {
-  width: 120%;
-  height: 45px;
-  top: 35%;
-  left: -10%;
-  transform: rotate(-15deg);
-}
-
-.road-two {
-  width: 100%;
-  height: 40px;
-  top: 65%;
-  left: 5%;
-  transform: rotate(20deg);
-}
-
-.road-three {
-  width: 45px;
-  height: 120%;
-  left: 50%;
-  top: -10%;
-  transform: rotate(12deg);
-}
-
-.map-marker {
-  position: absolute;
-  z-index: 10;
+.simulate-button {
   border: none;
-  background-color: white;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  font-size: 22px;
+  background: #111827;
+  color: white;
+
+  padding: 13px 20px;
+
+  border-radius: 8px;
+
   cursor: pointer;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+
+  font-weight: 600;
+  font-size: 14px;
+
+  white-space: nowrap;
 }
 
-.map-marker:hover {
-  transform: scale(1.15);
+.simulate-button:hover {
+  background: #000000;
 }
 
-.marker-1 {
-  top: 25%;
-  left: 30%;
-}
 
-.marker-2 {
-  top: 55%;
-  left: 65%;
-}
+/* =========================================
+   SUCCESS MESSAGE
+========================================= */
 
-.marker-3 {
-  top: 35%;
-  left: 75%;
-}
+.success-message {
+  background: #e8f7ee;
+  color: #16803c;
 
-.marker-4 {
-  top: 70%;
-  left: 25%;
-}
+  padding: 12px 18px;
 
-.selected-vehicle {
-  background-color: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
+  border-radius: 8px;
 
-.selected-vehicle h2 {
-  margin: 0 0 5px;
-}
-
-.selected-vehicle p {
-  margin: 5px 0;
-  color: #666;
-}
-
-.location-info {
-  margin-top: 15px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-
-.location-table-section {
-  background-color: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow-x: auto;
-}
-
-.location-table-section h2 {
-  margin-top: 0;
   margin-bottom: 20px;
-}
 
-.location-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 800px;
-}
-
-.location-table th,
-.location-table td {
-  padding: 13px;
-  text-align: left;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.location-table th {
-  background-color: #f5f7fb;
   font-weight: 600;
 }
 
-.location-table tbody tr:hover {
-  background-color: #fafafa;
+
+/* =========================================
+   ERROR MESSAGE
+========================================= */
+
+.error-message {
+  background: #fdecec;
+  color: #b42318;
+
+  padding: 12px 18px;
+
+  border-radius: 8px;
+
+  margin-bottom: 20px;
+
+  font-weight: 600;
 }
 
-@media (max-width: 900px) {
-  .map-content {
+
+/* =========================================
+   MAIN LAYOUT
+========================================= */
+
+.vehicle-map-layout {
+  display: grid;
+
+  grid-template-columns: 330px minmax(0, 1fr);
+
+  gap: 20px;
+
+  align-items: stretch;
+
+  width: 100%;
+}
+
+
+/* =========================================
+   VEHICLE DETAILS CARD
+========================================= */
+
+.vehicle-details-card {
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 14px;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+
+  box-sizing: border-box;
+
+  min-width: 0;
+
+  overflow: hidden;
+}
+
+.vehicle-details-card > h2 {
+  margin: 0 0 20px;
+
+  font-size: 22px;
+
+  color: #111827;
+}
+
+
+/* =========================================
+   VEHICLE INFORMATION
+   IMPORTANT:
+   Specific selector prevents conflict
+   with AdminDashboard .vehicle-info
+========================================= */
+
+.vehicle-details-card .vehicle-info {
+  display: block !important;
+
+  width: 100% !important;
+
+  max-width: 100% !important;
+
+  padding: 15px 5px !important;
+
+  margin: 0 !important;
+
+  text-align: center !important;
+
+  box-sizing: border-box !important;
+}
+
+
+/* =========================================
+   VEHICLE ICON
+========================================= */
+
+.vehicle-details-card .vehicle-icon {
+  display: block;
+
+  width: 100%;
+
+  font-size: 55px;
+
+  margin: 5px 0 15px;
+
+  text-align: center;
+}
+
+
+/* =========================================
+   VEHICLE NAME
+========================================= */
+
+.vehicle-details-card .vehicle-info h2 {
+  display: block;
+
+  width: 100%;
+
+  margin: 0 0 20px;
+
+  padding: 0;
+
+  font-size: 22px;
+
+  line-height: 1.3;
+
+  color: #111827;
+
+  text-align: center;
+
+  white-space: normal;
+
+  word-break: normal;
+
+  overflow-wrap: break-word;
+}
+
+
+/* =========================================
+   VEHICLE DETAILS
+========================================= */
+
+.vehicle-details-card .vehicle-info p {
+  display: block;
+
+  width: 100%;
+
+  margin: 14px 0;
+
+  padding: 0;
+
+  text-align: left;
+
+  line-height: 1.5;
+
+  font-size: 14px;
+
+  color: #333;
+
+  white-space: normal;
+
+  word-break: normal;
+
+  overflow-wrap: break-word;
+
+  box-sizing: border-box;
+}
+
+.vehicle-details-card .vehicle-info strong {
+  color: #111827;
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.vehicle-details-card .status {
+  display: inline-block;
+
+  background: #e8f7ee;
+
+  color: #16803c;
+
+  padding: 5px 10px;
+
+  border-radius: 20px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   MAP CARD
+========================================= */
+
+.map-card {
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 14px;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+
+  box-sizing: border-box;
+
+  min-width: 0;
+}
+
+.map-card h2 {
+  margin: 0 0 18px;
+
+  font-size: 22px;
+
+  color: #111827;
+}
+
+
+/* =========================================
+   MAP AREA
+========================================= */
+
+.map-area {
+  position: relative;
+
+  width: 100%;
+
+  height: 500px;
+
+  overflow: hidden;
+
+  border-radius: 12px;
+
+  background: #e7edf2;
+
+  border: 1px solid #d5dce2;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   MAP ROADS
+========================================= */
+
+.road {
+  position: absolute;
+
+  background: white;
+
+  border: 2px solid #d3d3d3;
+}
+
+.road-1 {
+  width: 120%;
+  height: 55px;
+
+  top: 40%;
+  left: -10%;
+
+  transform: rotate(-15deg);
+}
+
+.road-2 {
+  width: 120%;
+  height: 45px;
+
+  top: 20%;
+  left: -10%;
+
+  transform: rotate(17deg);
+}
+
+.road-3 {
+  width: 50px;
+  height: 120%;
+
+  left: 60%;
+  top: -10%;
+
+  transform: rotate(12deg);
+}
+
+.road-4 {
+  width: 45px;
+  height: 120%;
+
+  left: 25%;
+  top: -10%;
+
+  transform: rotate(-18deg);
+}
+
+
+/* =========================================
+   CITY NAME
+========================================= */
+
+.city-name {
+  position: absolute;
+
+  top: 20px;
+  left: 20px;
+
+  background: white;
+
+  padding: 9px 15px;
+
+  border-radius: 8px;
+
+  font-weight: 700;
+
+  font-size: 15px;
+
+  color: #111827;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  z-index: 4;
+}
+
+
+/* =========================================
+   VEHICLE MARKER
+========================================= */
+
+.vehicle-marker {
+  position: absolute;
+
+  transform: translate(-50%, -50%);
+
+  background: white;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  z-index: 5;
+
+  text-align: center;
+
+  transition: transform 0.2s ease;
+}
+
+.vehicle-marker:hover {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.vehicle-marker span {
+  display: block;
+
+  margin-top: 3px;
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+  color: #111827;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   LOCATION DETAILS CARD
+========================================= */
+
+.location-details-card {
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 14px;
+
+  margin-top: 20px;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+
+  box-sizing: border-box;
+
+  width: 100%;
+}
+
+.location-details-card h2 {
+  margin: 0 0 20px;
+
+  font-size: 22px;
+
+  color: #111827;
+}
+
+
+/* =========================================
+   TABLE CONTAINER
+========================================= */
+
+.table-container {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+/* =========================================
+   LOCATION TABLE
+========================================= */
+
+.location-details-card table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 750px;
+}
+
+.location-details-card th {
+  background: #f3f5f8;
+
+  text-align: left;
+
+  padding: 14px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #111827;
+}
+
+.location-details-card td {
+  padding: 14px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  font-size: 14px;
+
+  color: #333;
+
+  vertical-align: middle;
+}
+
+.location-details-card tbody tr:hover {
+  background: #fafafa;
+}
+
+
+/* =========================================
+   RESPONSIVE - TABLET
+========================================= */
+
+@media (max-width: 1000px) {
+
+  .vehicle-map-page {
+    padding: 20px;
+  }
+
+  .vehicle-map-layout {
     grid-template-columns: 1fr;
   }
 
-  .location-info {
-    grid-template-columns: 1fr;
+  .vehicle-details-card {
+    width: 100%;
+  }
+
+  .vehicle-details-card .vehicle-info {
+    max-width: 450px !important;
+
+    margin: 0 auto !important;
+  }
+
+  .map-area {
+    height: 450px;
   }
 }
 
-@media (max-width: 600px) {
-  .vehicle-map-container {
+
+/* =========================================
+   RESPONSIVE - MOBILE
+========================================= */
+
+@media (max-width: 650px) {
+
+  .vehicle-map-page {
     padding: 15px;
   }
 
-  .map-header h1 {
-    font-size: 22px;
+  .map-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    padding: 20px;
   }
 
-  .map-placeholder {
-    height: 350px;
+  .map-header h1 {
+    font-size: 23px;
+  }
+
+  .simulate-button {
+    width: 100%;
+  }
+
+  .vehicle-details-card,
+  .map-card,
+  .location-details-card {
+    padding: 18px;
+  }
+
+  .map-area {
+    height: 400px;
+  }
+
+  .city-name {
+    top: 12px;
+    left: 12px;
+  }
+
+  .vehicle-marker {
+    padding: 6px 9px;
+    font-size: 19px;
   }
 }

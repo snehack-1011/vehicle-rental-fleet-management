@@ -1,56 +1,116 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./AdminDashboard.css";
 
 function AdminDashboard() {
+  const [dashboard, setDashboard] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetchDashboard();
+  }, []);
+
+  const fetchDashboard = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/admin/dashboard"
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || "Failed to load dashboard"
+        );
+      }
+
+      setDashboard(data.dashboard);
+    } catch (error) {
+      console.error("Dashboard error:", error);
+      setError("Unable to load dashboard data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="admin-dashboard">
+        <h2>Loading Admin Dashboard...</h2>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="admin-dashboard">
+        <h2>{error}</h2>
+        <button onClick={fetchDashboard}>
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
   const dashboardData = [
     {
       title: "Total Vehicles",
-      value: "120",
+      value: dashboard.totalVehicles,
       icon: "🚗",
     },
     {
       title: "Available",
-      value: "72",
+      value: dashboard.availableVehicles,
       icon: "✅",
     },
     {
       title: "Reserved",
-      value: "18",
+      value: dashboard.reservedVehicles,
       icon: "📅",
     },
     {
       title: "Currently Rented",
-      value: "20",
+      value: dashboard.currentlyRented,
       icon: "🔑",
     },
     {
       title: "Under Maintenance",
-      value: "10",
+      value: dashboard.underMaintenance,
       icon: "🔧",
     },
     {
       title: "Daily Revenue",
-      value: "₹45,500",
+      value: `₹${Number(
+        dashboard.dailyRevenue
+      ).toLocaleString("en-IN")}`,
       icon: "💰",
     },
     {
       title: "Monthly Revenue",
-      value: "₹8,75,000",
+      value: `₹${Number(
+        dashboard.monthlyRevenue
+      ).toLocaleString("en-IN")}`,
       icon: "📈",
     },
     {
       title: "Maintenance Cost",
-      value: "₹1,25,000",
+      value: `₹${Number(
+        dashboard.maintenanceCost
+      ).toLocaleString("en-IN")}`,
       icon: "🛠️",
     },
   ];
 
   return (
     <div className="admin-dashboard">
+
+      {/* HEADER */}
       <div className="admin-header">
         <div>
           <h1>Admin Dashboard</h1>
-          <p>Vehicle Rental & Fleet Management System</p>
+          <p>
+            Vehicle Rental & Fleet Management System
+          </p>
         </div>
 
         <button className="admin-profile">
@@ -58,92 +118,90 @@ function AdminDashboard() {
         </button>
       </div>
 
+      {/* DASHBOARD CARDS */}
       <div className="dashboard-cards">
         {dashboardData.map((item, index) => (
-          <div className="dashboard-card" key={index}>
-            <div className="card-icon">{item.icon}</div>
+          <div
+            className="dashboard-card"
+            key={index}
+          >
+            <div className="card-icon">
+              {item.icon}
+            </div>
 
             <div>
-              <p className="card-title">{item.title}</p>
+              <p className="card-title">
+                {item.title}
+              </p>
+
               <h2>{item.value}</h2>
             </div>
           </div>
         ))}
       </div>
 
+      {/* MOST RENTED VEHICLE */}
       <div className="dashboard-section">
         <div className="section-header">
           <h2>Most Rented Vehicle</h2>
         </div>
 
+        {dashboard.mostRentedVehicle ? (
+          <div className="vehicle-info">
+            <div>
+              <h3>
+                {dashboard.mostRentedVehicle.name}
+              </h3>
+
+              <p>
+                Vehicle ID:{" "}
+                {dashboard.mostRentedVehicle.id}
+              </p>
+            </div>
+
+            <div className="rental-count">
+              <strong>
+                {dashboard.mostRentedVehicle.rentals}
+              </strong>
+
+              <span>Rentals</span>
+            </div>
+          </div>
+        ) : (
+          <div className="vehicle-info">
+            <div>
+              <h3>No rental data available</h3>
+              <p>
+                Vehicle rental information will appear
+                here.
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* SYSTEM STATUS */}
+      <div className="dashboard-section">
+        <div className="section-header">
+          <h2>Dashboard Status</h2>
+        </div>
+
         <div className="vehicle-info">
           <div>
-            <h3>Hyundai Creta</h3>
-            <p>Vehicle ID: CAR1001</p>
-            <p>Type: SUV</p>
+            <h3>Backend Connected</h3>
+            <p>
+              Dashboard data is being loaded from
+              MongoDB through the Node.js API.
+            </p>
           </div>
 
           <div className="rental-count">
-            <strong>28</strong>
-            <span>Rentals</span>
+            <strong>✓</strong>
+            <span>Connected</span>
           </div>
         </div>
       </div>
 
-      <div className="dashboard-section">
-        <div className="section-header">
-          <h2>Recent Vehicle Activity</h2>
-        </div>
-
-        <table className="activity-table">
-          <thead>
-            <tr>
-              <th>Vehicle ID</th>
-              <th>Vehicle</th>
-              <th>Status</th>
-              <th>Location</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr>
-              <td>CAR1001</td>
-              <td>Hyundai Creta</td>
-              <td>
-                <span className="status available">Available</span>
-              </td>
-              <td>Hyderabad</td>
-            </tr>
-
-            <tr>
-              <td>CAR1002</td>
-              <td>Honda City</td>
-              <td>
-                <span className="status rented">Rented</span>
-              </td>
-              <td>Bengaluru</td>
-            </tr>
-
-            <tr>
-              <td>CAR1003</td>
-              <td>Tata Nexon EV</td>
-              <td>
-                <span className="status maintenance">Maintenance</span>
-              </td>
-              <td>Mysuru</td>
-            </tr>
-
-            <tr>
-              <td>CAR1004</td>
-              <td>Toyota Innova</td>
-              <td>
-                <span className="status reserved">Reserved</span>
-              </td>
-              <td>Chennai</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }
