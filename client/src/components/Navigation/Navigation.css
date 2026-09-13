@@ -1,42 +1,112 @@
+/* =========================================
+   GLOBAL NAVIGATION
+========================================= */
+
 .navigation {
   width: 100%;
-  padding: 15px 30px;
-  background-color: #222;
+  min-height: 64px;
+  padding: 0 32px;
+  background: #222222;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  gap: 25px;
+
   box-sizing: border-box;
+  overflow: hidden;
 }
+
+/* =========================================
+   LOGO
+========================================= */
 
 .nav-logo {
   color: white;
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 21px;
+  font-weight: 700;
+
+  white-space: nowrap;
+  flex-shrink: 0;
 }
+
+/* =========================================
+   NAVIGATION LINKS
+========================================= */
 
 .nav-links {
   display: flex;
-  gap: 20px;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 22px;
+
+  flex-wrap: wrap;
 }
 
 .nav-links a {
   color: white;
   text-decoration: none;
-  font-size: 15px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  white-space: nowrap;
+
+  transition: color 0.2s ease;
 }
 
 .nav-links a:hover {
-  text-decoration: underline;
+  color: #d1d5db;
 }
 
-@media (max-width: 700px) {
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1050px) {
+
   .navigation {
-    flex-direction: column;
-    gap: 15px;
+    padding: 12px 20px;
   }
 
   .nav-links {
-    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+  .navigation {
+    min-height: auto;
+
+    flex-direction: column;
+
     justify-content: center;
+
+    padding: 15px 20px;
+
+    gap: 12px;
+  }
+
+  .nav-links {
+    width: 100%;
+
+    justify-content: center;
+
+    gap: 12px 18px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
   }
 }

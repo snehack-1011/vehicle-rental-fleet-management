@@ -1,139 +1,149 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ObjectId } = require("mongodb");
 const bcrypt = require("bcryptjs");
-require("dotenv").config();
 
 const app = express();
+
+// ======================================================
+// MIDDLEWARE
+// ======================================================
 
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+// ======================================================
+// MONGODB CONFIGURATION
+// ======================================================
 
 const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://127.0.0.1:27017";
+  process.env.MONGO_URI ||
+  "mongodb://127.0.0.1:27017";
 
 const DB_NAME =
-  process.env.DB_NAME || "vehicle_rental_platform";
+  process.env.DB_NAME ||
+  "vehicle_rental_platform";
 
-const client = new MongoClient(MONGO_URI);
+const PORT =
+  process.env.PORT || 5000;
 
 let db;
 
-
-// =====================================================
-// MONGODB CONNECTION
-// =====================================================
-
-async function connectDatabase() {
-  try {
-    await client.connect();
-
-    db = client.db(DB_NAME);
-
-    console.log("MongoDB connected successfully");
-    console.log(`Database: ${DB_NAME}`);
-  } catch (error) {
-    console.error("MongoDB connection failed:", error);
-    process.exit(1);
-  }
-}
-
-
-// =====================================================
+// ======================================================
 // HEALTH CHECK
-// =====================================================
+// ======================================================
 
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
-    message: "Vehicle Rental Backend is running",
+    message: "Vehicle Rental API is running",
   });
 });
 
-
-// =====================================================
-// REGISTER
-// =====================================================
+// ======================================================
+// AUTH - REGISTER
+// ======================================================
 
 app.post("/api/auth/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const {
+      name,
+      email,
+      password,
+      role,
+    } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Name, email and password are required",
+        message:
+          "Name, email and password are required",
       });
     }
 
-    const usersCollection = db.collection("users");
-
-    const existingUser = await usersCollection.findOne({
-      email: email.toLowerCase(),
-    });
+    const existingUser = await db
+      .collection("users")
+      .findOne({
+        email: email.toLowerCase(),
+      });
 
     if (existingUser) {
-      return res.status(409).json({
+      return res.status(400).json({
         success: false,
-        message: "User with this email already exists",
+        message: "User already exists",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(
+      password,
+      10
+    );
 
     const newUser = {
       name,
       email: email.toLowerCase(),
       password: hashedPassword,
-      role: "CUSTOMER",
+      role: role || "CUSTOMER",
       createdAt: new Date(),
     };
 
-    const result = await usersCollection.insertOne(newUser);
+    const result = await db
+      .collection("users")
+      .insertOne(newUser);
 
     res.status(201).json({
       success: true,
       message: "Registration successful",
-      userId: result.insertedId,
+      user: {
+        id: result.insertedId,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
     });
   } catch (error) {
     console.error("Register error:", error);
 
     res.status(500).json({
       success: false,
-      message: "Server error during registration",
+      message: "Registration failed",
+      error: error.message,
     });
   }
 });
 
-
-// =====================================================
-// LOGIN
-// =====================================================
+// ======================================================
+// AUTH - LOGIN
+// ======================================================
 
 app.post("/api/auth/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const {
+      email,
+      password,
+    } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Email and password are required",
+        message:
+          "Email and password are required",
       });
     }
 
-    const usersCollection = db.collection("users");
-
-    const user = await usersCollection.findOne({
-      email: email.toLowerCase(),
-    });
+    const user = await db
+      .collection("users")
+      .findOne({
+        email: email.toLowerCase(),
+      });
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password",
+        message:
+          "Invalid email or password",
       });
     }
 
@@ -145,7 +155,8 @@ app.post("/api/auth/login", async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({
         success: false,
-        message: "Invalid email or password",
+        message:
+          "Invalid email or password",
       });
     }
 
@@ -164,222 +175,263 @@ app.post("/api/auth/login", async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Server error during login",
+      message: "Login failed",
+      error: error.message,
     });
   }
 });
 
-
-// =====================================================
+// ======================================================
 // ADMIN DASHBOARD
-// =====================================================
+// ======================================================
 
 app.get("/api/admin/dashboard", async (req, res) => {
   try {
-    const vehiclesCollection = db.collection("vehicles");
-    const invoicesCollection = db.collection("invoices");
-    const maintenanceCollection = db.collection("maintenance");
-    const rentalsCollection = db.collection("rentals");
-
-    const vehicles = await vehiclesCollection
+    const vehicles = await db
+      .collection("vehicles")
       .find({})
       .toArray();
+
+    const invoices = await db
+      .collection("invoices")
+      .find({})
+      .toArray();
+
+    const maintenance = await db
+      .collection("maintenance")
+      .find({})
+      .toArray();
+
+    // ==================================================
+    // VEHICLE COUNTS
+    // ==================================================
 
     const totalVehicles = vehicles.length;
 
-    const availableVehicles = vehicles.filter(
+    const available = vehicles.filter(
       (vehicle) =>
-        String(vehicle.status).toUpperCase() === "AVAILABLE"
+        vehicle.status === "AVAILABLE"
     ).length;
 
-    const reservedVehicles = vehicles.filter(
+    const reserved = vehicles.filter(
       (vehicle) =>
-        String(vehicle.status).toUpperCase() === "RESERVED"
+        vehicle.status === "RESERVED"
     ).length;
 
-    const rentedVehicles = vehicles.filter(
+    const rented = vehicles.filter(
       (vehicle) =>
-        String(vehicle.status).toUpperCase() === "RENTED"
+        vehicle.status === "RENTED"
     ).length;
 
-    const maintenanceVehicles = vehicles.filter(
+    const underMaintenance = vehicles.filter(
       (vehicle) =>
-        String(vehicle.status).toUpperCase() === "MAINTENANCE"
+        vehicle.status === "MAINTENANCE" ||
+        vehicle.status === "DAMAGED"
     ).length;
 
+    // ==================================================
+    // REVENUE CALCULATION
+    // ==================================================
 
-    // -----------------------------
-    // DAILY REVENUE
-    // -----------------------------
+    /*
+      Daily Revenue:
+      Only invoices created TODAY.
+
+      Monthly Revenue:
+      All invoices created during the CURRENT MONTH.
+    */
 
     const today = new Date();
 
-    const startOfDay = new Date(today);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const startOfTomorrow = new Date(startOfDay);
-    startOfTomorrow.setDate(
-      startOfTomorrow.getDate() + 1
+    // Current date in Indian Standard Time
+    const todayKey = today.toLocaleDateString(
+      "en-CA",
+      {
+        timeZone: "Asia/Kolkata",
+      }
     );
 
-    const invoices = await invoicesCollection
-      .find({})
-      .toArray();
+    // Example:
+    // todayKey = "2026-09-13"
 
-    let dailyRevenue = 0;
-    let monthlyRevenue = 0;
+    const currentMonthKey =
+      todayKey.substring(0, 7);
 
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+    // Example:
+    // currentMonthKey = "2026-09"
 
-    invoices.forEach((invoice) => {
-      const amount = Number(
-        invoice.totalAmount ||
-        invoice.total ||
-        invoice.amount ||
-        0
-      );
+    // --------------------------------------------------
+    // DAILY REVENUE
+    // --------------------------------------------------
 
-      const invoiceDate = new Date(
-        invoice.createdAt ||
-        invoice.date ||
-        today
-      );
+    const dailyRevenue = invoices.reduce(
+      (sum, invoice) => {
+        if (!invoice.createdAt) {
+          return sum;
+        }
 
-      if (
-        invoiceDate >= startOfDay &&
-        invoiceDate < startOfTomorrow
-      ) {
-        dailyRevenue += amount;
-      }
+        const invoiceDate = new Date(
+          invoice.createdAt
+        );
 
-      if (
-        invoiceDate.getMonth() === currentMonth &&
-        invoiceDate.getFullYear() === currentYear
-      ) {
-        monthlyRevenue += amount;
-      }
-    });
+        const invoiceDateKey =
+          invoiceDate.toLocaleDateString(
+            "en-CA",
+            {
+              timeZone: "Asia/Kolkata",
+            }
+          );
 
+        if (
+          invoiceDateKey === todayKey
+        ) {
+          return (
+            sum +
+            Number(invoice.total || 0)
+          );
+        }
 
-    // -----------------------------
+        return sum;
+      },
+      0
+    );
+
+    // --------------------------------------------------
+    // MONTHLY REVENUE
+    // --------------------------------------------------
+
+    const monthlyRevenue = invoices.reduce(
+      (sum, invoice) => {
+        if (!invoice.createdAt) {
+          return sum;
+        }
+
+        const invoiceDate = new Date(
+          invoice.createdAt
+        );
+
+        const invoiceDateKey =
+          invoiceDate.toLocaleDateString(
+            "en-CA",
+            {
+              timeZone: "Asia/Kolkata",
+            }
+          );
+
+        const invoiceMonthKey =
+          invoiceDateKey.substring(0, 7);
+
+        if (
+          invoiceMonthKey ===
+          currentMonthKey
+        ) {
+          return (
+            sum +
+            Number(invoice.total || 0)
+          );
+        }
+
+        return sum;
+      },
+      0
+    );
+
+    // ==================================================
     // MAINTENANCE COST
-    // -----------------------------
+    // ==================================================
 
-    const maintenanceRecords =
-      await maintenanceCollection
-        .find({})
-        .toArray();
-
-    let maintenanceCost = 0;
-
-    maintenanceRecords.forEach((record) => {
-      maintenanceCost += Number(
-        record.cost ||
-        record.maintenanceCost ||
+    const maintenanceCost =
+      maintenance.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.cost || 0),
         0
       );
-    });
 
-
-    // -----------------------------
+    // ==================================================
     // MOST RENTED VEHICLE
-    // -----------------------------
+    // ==================================================
 
-    const rentals = await rentalsCollection
-      .find({})
-      .toArray();
+    const rentedVehicles =
+      invoices.reduce(
+        (result, invoice) => {
+          const vehicle =
+            invoice.vehicleName ||
+            invoice.vehicleId;
 
-    const rentalCounts = {};
+          if (vehicle) {
+            result[vehicle] =
+              (result[vehicle] || 0) + 1;
+          }
 
-    rentals.forEach((rental) => {
-      const vehicleId =
-        rental.vehicleId ||
-        rental.vehicle;
-
-      if (vehicleId) {
-        const key = String(vehicleId);
-
-        rentalCounts[key] =
-          (rentalCounts[key] || 0) + 1;
-      }
-    });
-
-    let mostRentedVehicle = null;
-
-    const rentalEntries =
-      Object.entries(rentalCounts);
-
-    if (rentalEntries.length > 0) {
-      rentalEntries.sort(
-        (a, b) => b[1] - a[1]
+          return result;
+        },
+        {}
       );
 
-      const [vehicleId, rentalCount] =
-        rentalEntries[0];
+    let mostRentedVehicle = "N/A";
+    let highestCount = 0;
 
-      const vehicle =
-        await vehiclesCollection.findOne({
-          $or: [
-            { _id: ObjectId.isValid(vehicleId)
-                ? new ObjectId(vehicleId)
-                : null
-            },
-            { id: vehicleId },
-            { vehicleId: vehicleId },
-          ],
-        });
+    Object.entries(
+      rentedVehicles
+    ).forEach(
+      ([vehicle, count]) => {
+        if (count > highestCount) {
+          highestCount = count;
+          mostRentedVehicle = vehicle;
+        }
+      }
+    );
 
-      mostRentedVehicle = {
-        id: vehicleId,
-        name:
-          vehicle?.name ||
-          vehicle?.vehicleName ||
-          "Unknown Vehicle",
-        rentals: rentalCount,
-      };
-    }
-
+    // ==================================================
+    // SEND DASHBOARD DATA
+    // ==================================================
 
     res.json({
       success: true,
+
       dashboard: {
         totalVehicles,
-        availableVehicles,
-        reservedVehicles,
-        currentlyRented: rentedVehicles,
-        underMaintenance: maintenanceVehicles,
+        available,
+        reserved,
+        rented,
+        underMaintenance,
+
         dailyRevenue,
         monthlyRevenue,
+
         maintenanceCost,
         mostRentedVehicle,
       },
     });
   } catch (error) {
     console.error(
-      "Admin dashboard error:",
+      "Dashboard error:",
       error
     );
 
     res.status(500).json({
       success: false,
       message:
-        "Server error while loading admin dashboard",
+        "Failed to load dashboard",
+      error: error.message,
     });
   }
 });
 
-
-// =====================================================
+// ======================================================
 // GET ALL VEHICLES
-// =====================================================
+// ======================================================
 
 app.get("/api/vehicles", async (req, res) => {
   try {
-    const vehicles =
-      await db.collection("vehicles")
-        .find({})
-        .toArray();
+    const vehicles = await db
+      .collection("vehicles")
+      .find({})
+      .sort({
+        createdAt: -1,
+      })
+      .toArray();
 
     res.json({
       success: true,
@@ -394,86 +446,133 @@ app.get("/api/vehicles", async (req, res) => {
     res.status(500).json({
       success: false,
       message:
-        "Server error while fetching vehicles",
+        "Failed to load vehicles",
+      error: error.message,
     });
   }
 });
 
+// ======================================================
+// GET SINGLE VEHICLE
+// ======================================================
 
-// =====================================================
-// GET VEHICLE BY ID
-// =====================================================
+app.get(
+  "/api/vehicles/:id",
+  async (req, res) => {
+    try {
+      const value = req.params.id;
 
-app.get("/api/vehicles/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    let vehicle = null;
-
-    if (ObjectId.isValid(id)) {
-      vehicle =
-        await db.collection("vehicles").findOne({
-          _id: new ObjectId(id),
+      let vehicle = await db
+        .collection("vehicles")
+        .findOne({
+          id: value,
         });
-    }
 
-    if (!vehicle) {
-      vehicle =
-        await db.collection("vehicles").findOne({
-          $or: [
-            { id: id },
-            { vehicleId: id },
-          ],
+      if (
+        !vehicle &&
+        ObjectId.isValid(value)
+      ) {
+        vehicle = await db
+          .collection("vehicles")
+          .findOne({
+            _id: new ObjectId(value),
+          });
+      }
+
+      if (!vehicle) {
+        return res.status(404).json({
+          success: false,
+          message: "Vehicle not found",
         });
-    }
+      }
 
-    if (!vehicle) {
-      return res.status(404).json({
+      res.json({
+        success: true,
+        vehicle,
+      });
+    } catch (error) {
+      console.error(
+        "Get vehicle error:",
+        error
+      );
+
+      res.status(500).json({
         success: false,
-        message: "Vehicle not found",
+        message:
+          "Failed to load vehicle",
+        error: error.message,
       });
     }
-
-    res.json({
-      success: true,
-      vehicle,
-    });
-  } catch (error) {
-    console.error(
-      "Get vehicle error:",
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        "Server error while fetching vehicle",
-    });
   }
-});
+);
 
-
-// =====================================================
+// ======================================================
 // ADD VEHICLE
-// =====================================================
+// ======================================================
 
 app.post("/api/vehicles", async (req, res) => {
   try {
-    const vehicle = {
-      ...req.body,
+    const {
+      id,
+      model,
+      type,
+      location,
+      status,
+      pricePerDay,
+    } = req.body;
+
+    if (
+      !id ||
+      !model ||
+      !type ||
+      !location
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Vehicle ID, model, type and location are required",
+      });
+    }
+
+    const existingVehicle =
+      await db
+        .collection("vehicles")
+        .findOne({
+          id: id,
+        });
+
+    if (existingVehicle) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Vehicle ID already exists",
+      });
+    }
+
+    const newVehicle = {
+      id,
+      model,
+      type,
+      location,
+      status:
+        status || "AVAILABLE",
+      pricePerDay: Number(
+        pricePerDay || 0
+      ),
       createdAt: new Date(),
     };
 
-    const result =
-      await db.collection("vehicles")
-        .insertOne(vehicle);
+    const result = await db
+      .collection("vehicles")
+      .insertOne(newVehicle);
 
     res.status(201).json({
       success: true,
-      message: "Vehicle added successfully",
+      message:
+        "Vehicle added successfully",
       vehicle: {
+        ...newVehicle,
         _id: result.insertedId,
-        ...vehicle,
       },
     });
   } catch (error) {
@@ -485,382 +584,828 @@ app.post("/api/vehicles", async (req, res) => {
     res.status(500).json({
       success: false,
       message:
-        "Server error while adding vehicle",
+        "Failed to add vehicle",
+      error: error.message,
     });
   }
 });
 
+// ======================================================
+// UPDATE VEHICLE
+// ======================================================
 
-// =====================================================
-// GET MAINTENANCE RECORDS
-// =====================================================
+app.put(
+  "/api/vehicles/:id",
+  async (req, res) => {
+    try {
+      const value = req.params.id;
 
-app.get("/api/maintenance", async (req, res) => {
-  try {
-    const records =
-      await db.collection("maintenance")
-        .find({})
-        .sort({ createdAt: -1 })
-        .toArray();
+      const {
+        id,
+        model,
+        type,
+        location,
+        status,
+        pricePerDay,
+      } = req.body;
 
-    res.json({
-      success: true,
-      maintenance: records,
-    });
-  } catch (error) {
-    console.error(
-      "Get maintenance error:",
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        "Server error while fetching maintenance records",
-    });
-  }
-});
-
-
-// =====================================================
-// CREATE MAINTENANCE REQUEST
-// =====================================================
-
-app.post("/api/maintenance", async (req, res) => {
-  try {
-    const {
-      vehicleId,
-      description,
-      cost,
-    } = req.body;
-
-    if (!vehicleId || !description) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Vehicle ID and description are required",
-      });
-    }
-
-    const maintenance = {
-      vehicleId,
-      description,
-      cost: Number(cost || 0),
-      status: "OPEN",
-      createdAt: new Date(),
-    };
-
-    const result =
-      await db.collection("maintenance")
-        .insertOne(maintenance);
-
-
-    // Change vehicle status
-    let vehicleQuery = null;
-
-    if (ObjectId.isValid(vehicleId)) {
-      vehicleQuery = {
-        _id: new ObjectId(vehicleId),
+      const updateData = {
+        model,
+        type,
+        location,
+        status,
+        pricePerDay: Number(
+          pricePerDay || 0
+        ),
+        updatedAt: new Date(),
       };
-    } else {
-      vehicleQuery = {
-        $or: [
-          { id: vehicleId },
-          { vehicleId: vehicleId },
-        ],
-      };
-    }
 
-    await db.collection("vehicles").updateOne(
-      vehicleQuery,
-      {
-        $set: {
-          status: "MAINTENANCE",
-          updatedAt: new Date(),
-        },
+      let result = await db
+        .collection("vehicles")
+        .updateOne(
+          {
+            id: value,
+          },
+          {
+            $set: updateData,
+          }
+        );
+
+      if (
+        result.matchedCount === 0 &&
+        ObjectId.isValid(value)
+      ) {
+        result = await db
+          .collection("vehicles")
+          .updateOne(
+            {
+              _id: new ObjectId(value),
+            },
+            {
+              $set: {
+                ...updateData,
+                ...(id ? { id } : {}),
+              },
+            }
+          );
       }
-    );
 
+      if (result.matchedCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Vehicle not found",
+        });
+      }
 
-    res.status(201).json({
-      success: true,
-      message:
-        "Maintenance request created successfully",
-      maintenance: {
-        _id: result.insertedId,
-        ...maintenance,
-      },
-    });
-  } catch (error) {
-    console.error(
-      "Create maintenance error:",
-      error
-    );
+      res.json({
+        success: true,
+        message:
+          "Vehicle updated successfully",
+      });
+    } catch (error) {
+      console.error(
+        "Update vehicle error:",
+        error
+      );
 
-    res.status(500).json({
-      success: false,
-      message:
-        "Server error while creating maintenance request",
-    });
-  }
-});
-
-
-// =====================================================
-// CREATE INVOICE
-// =====================================================
-
-app.post("/api/invoices", async (req, res) => {
-  try {
-    const {
-      invoiceNumber,
-      customerName,
-      vehicleName,
-      vehicleId,
-      startDate,
-      returnDate,
-      location,
-      baseRental,
-      insurance,
-      additionalDriver,
-      lateFee,
-      damageCharges,
-    } = req.body;
-
-
-    if (
-      !invoiceNumber ||
-      !customerName ||
-      !vehicleName ||
-      !vehicleId
-    ) {
-      return res.status(400).json({
+      res.status(500).json({
         success: false,
         message:
-          "Required invoice details are missing",
+          "Failed to update vehicle",
+        error: error.message,
       });
     }
+  }
+);
 
+// ======================================================
+// DELETE VEHICLE
+// ======================================================
 
-    const totalAmount =
-      Number(baseRental || 0) +
-      Number(insurance || 0) +
-      Number(additionalDriver || 0) +
-      Number(lateFee || 0) +
-      Number(damageCharges || 0);
+app.delete(
+  "/api/vehicles/:id",
+  async (req, res) => {
+    try {
+      const value = req.params.id;
 
+      console.log(
+        "DELETE REQUEST RECEIVED:",
+        value
+      );
 
-    const invoice = {
-      invoiceNumber,
-      customerName,
-      vehicleName,
-      vehicleId,
-      startDate: startDate || "",
-      returnDate: returnDate || "",
-      location: location || "",
+      let result = await db
+        .collection("vehicles")
+        .deleteOne({
+          id: value,
+        });
 
-      baseRental:
-        Number(baseRental || 0),
+      if (
+        result.deletedCount === 0 &&
+        ObjectId.isValid(value)
+      ) {
+        console.log(
+          "Trying MongoDB _id:",
+          value
+        );
 
-      insurance:
-        Number(insurance || 0),
+        result = await db
+          .collection("vehicles")
+          .deleteOne({
+            _id: new ObjectId(value),
+          });
+      }
 
-      additionalDriver:
-        Number(additionalDriver || 0),
+      console.log(
+        "DELETE RESULT:",
+        result.deletedCount
+      );
 
-      lateFee:
-        Number(lateFee || 0),
+      if (result.deletedCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Vehicle not found in database",
+        });
+      }
 
-      damageCharges:
-        Number(damageCharges || 0),
+      res.json({
+        success: true,
+        message:
+          "Vehicle deleted successfully",
+      });
+    } catch (error) {
+      console.error(
+        "DELETE ERROR:",
+        error
+      );
 
-      totalAmount,
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to delete vehicle",
+        error: error.message,
+      });
+    }
+  }
+);
 
-      createdAt: new Date(),
-    };
+// ======================================================
+// MAINTENANCE - GET
+// ======================================================
 
+app.get(
+  "/api/maintenance",
+  async (req, res) => {
+    try {
+      const maintenance =
+        await db
+          .collection("maintenance")
+          .find({})
+          .sort({
+            createdAt: -1,
+          })
+          .toArray();
 
-    const result =
-      await db.collection("invoices")
+      res.json({
+        success: true,
+        maintenance,
+      });
+    } catch (error) {
+      console.error(
+        "Get maintenance error:",
+        error
+      );
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to load maintenance records",
+        error: error.message,
+      });
+    }
+  }
+);
+
+// ======================================================
+// MAINTENANCE - ADD
+// ======================================================
+
+app.post(
+  "/api/maintenance",
+  async (req, res) => {
+    try {
+      const {
+        vehicleId,
+        issue,
+        priority,
+        cost,
+      } = req.body;
+
+      if (!vehicleId || !issue) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Vehicle ID and issue are required",
+        });
+      }
+
+      const maintenanceRecord = {
+        vehicleId: String(vehicleId),
+
+        issue,
+
+        priority:
+          priority || "MEDIUM",
+
+        cost: Number(cost || 0),
+
+        createdAt: new Date(),
+      };
+
+      const result = await db
+        .collection("maintenance")
+        .insertOne(
+          maintenanceRecord
+        );
+
+      // Change vehicle status
+      await db
+        .collection("vehicles")
+        .updateOne(
+          {
+            id: String(vehicleId),
+          },
+          {
+            $set: {
+              status: "MAINTENANCE",
+            },
+          }
+        );
+
+      res.status(201).json({
+        success: true,
+        message:
+          "Maintenance record added",
+
+        maintenance: {
+          ...maintenanceRecord,
+          _id: result.insertedId,
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Add maintenance error:",
+        error
+      );
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to add maintenance record",
+        error: error.message,
+      });
+    }
+  }
+);
+
+// ======================================================
+// INVOICE TOTAL CALCULATION
+// ======================================================
+
+function calculateInvoiceTotal(data) {
+  return (
+    Number(
+      data.baseRental || 0
+    ) +
+    Number(
+      data.weekendCharges || 0
+    ) +
+    Number(
+      data.peakSeasonCharges || 0
+    ) +
+    Number(
+      data.insurance || 0
+    ) +
+    Number(
+      data.additionalDriver || 0
+    ) +
+    Number(
+      data.lateFee || 0
+    ) +
+    Number(
+      data.damageCharges || 0
+    )
+  );
+}
+
+// ======================================================
+// GET ALL INVOICES
+// ======================================================
+
+app.get(
+  "/api/invoices",
+  async (req, res) => {
+    try {
+      const invoices =
+        await db
+          .collection("invoices")
+          .find({})
+          .sort({
+            createdAt: -1,
+          })
+          .toArray();
+
+      res.json({
+        success: true,
+        invoices,
+      });
+    } catch (error) {
+      console.error(
+        "Get invoices error:",
+        error
+      );
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to load invoices",
+        error: error.message,
+      });
+    }
+  }
+);
+
+// ======================================================
+// GET SINGLE INVOICE
+// ======================================================
+
+app.get(
+  "/api/invoices/:id",
+  async (req, res) => {
+    try {
+      const value = req.params.id;
+
+      let invoice = await db
+        .collection("invoices")
+        .findOne({
+          invoiceNumber: value,
+        });
+
+      if (
+        !invoice &&
+        ObjectId.isValid(value)
+      ) {
+        invoice = await db
+          .collection("invoices")
+          .findOne({
+            _id: new ObjectId(value),
+          });
+      }
+
+      if (!invoice) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Invoice not found",
+        });
+      }
+
+      res.json({
+        success: true,
+        invoice,
+      });
+    } catch (error) {
+      console.error(
+        "Get invoice error:",
+        error
+      );
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to load invoice",
+        error: error.message,
+      });
+    }
+  }
+);
+
+// ======================================================
+// CREATE INVOICE
+// ======================================================
+
+app.post(
+  "/api/invoices",
+  async (req, res) => {
+    try {
+      const data = req.body;
+
+      if (!data.invoiceNumber) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invoice number is required",
+        });
+      }
+
+      const existingInvoice =
+        await db
+          .collection("invoices")
+          .findOne({
+            invoiceNumber:
+              data.invoiceNumber,
+          });
+
+      if (existingInvoice) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Invoice number already exists",
+        });
+      }
+
+      const total =
+        calculateInvoiceTotal(data);
+
+      const invoice = {
+        invoiceNumber:
+          data.invoiceNumber,
+
+        customerName:
+          data.customerName || "",
+
+        vehicleName:
+          data.vehicleName || "",
+
+        vehicleId:
+          data.vehicleId || "",
+
+        startDate:
+          data.startDate || "",
+
+        returnDate:
+          data.returnDate || "",
+
+        location:
+          data.location || "",
+
+        baseRental: Number(
+          data.baseRental || 0
+        ),
+
+        weekendCharges: Number(
+          data.weekendCharges || 0
+        ),
+
+        peakSeasonCharges: Number(
+          data.peakSeasonCharges || 0
+        ),
+
+        insurance: Number(
+          data.insurance || 0
+        ),
+
+        additionalDriver: Number(
+          data.additionalDriver || 0
+        ),
+
+        lateFee: Number(
+          data.lateFee || 0
+        ),
+
+        damageCharges: Number(
+          data.damageCharges || 0
+        ),
+
+        total,
+
+        notes:
+          data.notes || "",
+
+        createdAt: new Date(),
+
+        updatedAt: new Date(),
+      };
+
+      const result = await db
+        .collection("invoices")
         .insertOne(invoice);
 
+      res.status(201).json({
+        success: true,
+        message:
+          "Invoice created successfully",
 
-    res.status(201).json({
-      success: true,
-      message: "Invoice created successfully",
-
-      invoice: {
-        id: result.insertedId,
-        ...invoice,
-      },
-    });
-  } catch (error) {
-    console.error(
-      "Create invoice error:",
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        "Server error while creating invoice",
-    });
-  }
-});
-
-
-// =====================================================
-// GET INVOICE
-// =====================================================
-
-app.get("/api/invoices/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const invoicesCollection =
-      db.collection("invoices");
-
-    let invoice = null;
-
-
-    // Search using MongoDB ObjectId
-    if (ObjectId.isValid(id)) {
-      invoice =
-        await invoicesCollection.findOne({
-          _id: new ObjectId(id),
-        });
-    }
-
-
-    // If not found, search using invoice number
-    if (!invoice) {
-      invoice =
-        await invoicesCollection.findOne({
-          invoiceNumber: id,
-        });
-    }
-
-
-    if (!invoice) {
-      return res.status(404).json({
-        success: false,
-        message: "Invoice not found",
+        invoice: {
+          ...invoice,
+          _id: result.insertedId,
+        },
       });
-    }
+    } catch (error) {
+      console.error(
+        "Create invoice error:",
+        error
+      );
 
-
-    res.json({
-      success: true,
-      invoice,
-    });
-  } catch (error) {
-    console.error(
-      "Get invoice error:",
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        "Server error while fetching invoice",
-    });
-  }
-});
-
-
-// =====================================================
-// CREATE RATING
-// =====================================================
-
-app.post("/api/ratings", async (req, res) => {
-  try {
-    const {
-      vehicleId,
-      customerId,
-      rating,
-      review,
-    } = req.body;
-
-
-    if (
-      !vehicleId ||
-      !rating
-    ) {
-      return res.status(400).json({
+      res.status(500).json({
         success: false,
         message:
-          "Vehicle ID and rating are required",
+          "Failed to create invoice",
+        error: error.message,
       });
     }
+  }
+);
 
+// ======================================================
+// UPDATE INVOICE
+// ======================================================
 
-    if (
-      Number(rating) < 1 ||
-      Number(rating) > 5
-    ) {
-      return res.status(400).json({
+app.put(
+  "/api/invoices/:id",
+  async (req, res) => {
+    try {
+      const value = req.params.id;
+
+      const data = req.body;
+
+      const updateData = {
+        invoiceNumber:
+          data.invoiceNumber,
+
+        customerName:
+          data.customerName || "",
+
+        vehicleName:
+          data.vehicleName || "",
+
+        vehicleId:
+          data.vehicleId || "",
+
+        startDate:
+          data.startDate || "",
+
+        returnDate:
+          data.returnDate || "",
+
+        location:
+          data.location || "",
+
+        baseRental: Number(
+          data.baseRental || 0
+        ),
+
+        weekendCharges: Number(
+          data.weekendCharges || 0
+        ),
+
+        peakSeasonCharges: Number(
+          data.peakSeasonCharges || 0
+        ),
+
+        insurance: Number(
+          data.insurance || 0
+        ),
+
+        additionalDriver: Number(
+          data.additionalDriver || 0
+        ),
+
+        lateFee: Number(
+          data.lateFee || 0
+        ),
+
+        damageCharges: Number(
+          data.damageCharges || 0
+        ),
+
+        total:
+          calculateInvoiceTotal(
+            data
+          ),
+
+        notes:
+          data.notes || "",
+
+        updatedAt: new Date(),
+      };
+
+      let result = await db
+        .collection("invoices")
+        .updateOne(
+          {
+            invoiceNumber: value,
+          },
+          {
+            $set: updateData,
+          }
+        );
+
+      if (
+        result.matchedCount === 0 &&
+        ObjectId.isValid(value)
+      ) {
+        result = await db
+          .collection("invoices")
+          .updateOne(
+            {
+              _id: new ObjectId(value),
+            },
+            {
+              $set: updateData,
+            }
+          );
+      }
+
+      if (result.matchedCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Invoice not found",
+        });
+      }
+
+      res.json({
+        success: true,
+        message:
+          "Invoice updated successfully",
+      });
+    } catch (error) {
+      console.error(
+        "Update invoice error:",
+        error
+      );
+
+      res.status(500).json({
         success: false,
         message:
-          "Rating must be between 1 and 5",
+          "Failed to update invoice",
+        error: error.message,
       });
     }
-
-
-    const ratingData = {
-      vehicleId,
-      customerId: customerId || null,
-      rating: Number(rating),
-      review: review || "",
-      createdAt: new Date(),
-    };
-
-
-    const result =
-      await db.collection("ratings")
-        .insertOne(ratingData);
-
-
-    res.status(201).json({
-      success: true,
-      message:
-        "Rating submitted successfully",
-
-      rating: {
-        _id: result.insertedId,
-        ...ratingData,
-      },
-    });
-  } catch (error) {
-    console.error(
-      "Create rating error:",
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        "Server error while submitting rating",
-    });
   }
-});
+);
 
+// ======================================================
+// DELETE INVOICE
+// ======================================================
 
-// =====================================================
-// GET RATINGS FOR VEHICLE
-// =====================================================
+app.delete(
+  "/api/invoices/:id",
+  async (req, res) => {
+    try {
+      const value = req.params.id;
+
+      let result = await db
+        .collection("invoices")
+        .deleteOne({
+          invoiceNumber: value,
+        });
+
+      if (
+        result.deletedCount === 0 &&
+        ObjectId.isValid(value)
+      ) {
+        result = await db
+          .collection("invoices")
+          .deleteOne({
+            _id: new ObjectId(value),
+          });
+      }
+
+      if (result.deletedCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Invoice not found",
+        });
+      }
+
+      res.json({
+        success: true,
+        message:
+          "Invoice deleted successfully",
+      });
+    } catch (error) {
+      console.error(
+        "Delete invoice error:",
+        error
+      );
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to delete invoice",
+        error: error.message,
+      });
+    }
+  }
+);
+
+// ======================================================
+// RATINGS - ADD
+// ======================================================
+
+app.post(
+  "/api/ratings",
+  async (req, res) => {
+    try {
+      const {
+        vehicleId,
+        customerId,
+        rating,
+        review,
+      } = req.body;
+
+      if (
+        !vehicleId ||
+        !customerId ||
+        !rating
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Vehicle ID, customer ID and rating are required",
+        });
+      }
+
+      const ratingValue = Number(rating);
+
+      if (
+        ratingValue < 1 ||
+        ratingValue > 5
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Rating must be between 1 and 5",
+        });
+      }
+
+      const newRating = {
+        vehicleId: String(vehicleId),
+
+        customerId: String(customerId),
+
+        rating: ratingValue,
+
+        review: review || "",
+
+        createdAt: new Date(),
+      };
+
+      const result = await db
+        .collection("ratings")
+        .insertOne(newRating);
+
+      res.status(201).json({
+        success: true,
+        message:
+          "Rating submitted successfully",
+
+        rating: {
+          ...newRating,
+          _id: result.insertedId,
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Create rating error:",
+        error
+      );
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to submit rating",
+        error: error.message,
+      });
+    }
+  }
+);
+
+// ======================================================
+// RATINGS - GET ALL FOR VEHICLE
+// ======================================================
 
 app.get(
   "/api/ratings/:vehicleId",
   async (req, res) => {
     try {
-      const { vehicleId } = req.params;
+      const vehicleId = String(
+        req.params.vehicleId
+      );
 
-      const ratings =
-        await db.collection("ratings")
-          .find({ vehicleId })
-          .sort({ createdAt: -1 })
-          .toArray();
-
+      const ratings = await db
+        .collection("ratings")
+        .find({
+          vehicleId: vehicleId,
+        })
+        .sort({
+          createdAt: -1,
+        })
+        .toArray();
 
       res.json({
         success: true,
@@ -875,125 +1420,161 @@ app.get(
       res.status(500).json({
         success: false,
         message:
-          "Server error while fetching ratings",
+          "Failed to fetch ratings",
+        error: error.message,
       });
     }
   }
 );
 
+// ======================================================
+// LOCATIONS - ADD
+// ======================================================
 
-// =====================================================
-// ADD VEHICLE LOCATION
-// =====================================================
+app.post(
+  "/api/locations",
+  async (req, res) => {
+    try {
+      const {
+        vehicleId,
+        latitude,
+        longitude,
+        timestamp,
+      } = req.body;
 
-app.post("/api/locations", async (req, res) => {
-  try {
-    const {
-      vehicleId,
-      latitude,
-      longitude,
-      timestamp,
-    } = req.body;
+      if (
+        !vehicleId ||
+        latitude === undefined ||
+        longitude === undefined
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Vehicle ID, latitude and longitude are required",
+        });
+      }
 
+      const location = {
+        vehicleId: String(
+          vehicleId
+        ),
 
-    if (
-      !vehicleId ||
-      latitude === undefined ||
-      longitude === undefined
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Vehicle ID, latitude and longitude are required",
-      });
-    }
+        latitude: Number(
+          latitude
+        ),
 
+        longitude: Number(
+          longitude
+        ),
 
-    const location = {
-      vehicleId,
-      latitude: Number(latitude),
-      longitude: Number(longitude),
-      timestamp:
-        timestamp
+        timestamp: timestamp
           ? new Date(timestamp)
           : new Date(),
-    };
+      };
 
-
-    const result =
-      await db.collection("locations")
+      const result = await db
+        .collection("locations")
         .insertOne(location);
 
+      res.status(201).json({
+        success: true,
+        message:
+          "Vehicle location saved successfully",
 
-    res.status(201).json({
-      success: true,
-      message:
-        "Vehicle location saved successfully",
+        location: {
+          ...location,
+          _id: result.insertedId,
+        },
+      });
+    } catch (error) {
+      console.error(
+        "Save location error:",
+        error
+      );
 
-      location: {
-        _id: result.insertedId,
-        ...location,
-      },
-    });
-  } catch (error) {
-    console.error(
-      "Create location error:",
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        "Server error while saving location",
-    });
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to save vehicle location",
+        error: error.message,
+      });
+    }
   }
-});
+);
 
+// ======================================================
+// LOCATIONS - GET ALL
+// ======================================================
 
-// =====================================================
-// GET VEHICLE LOCATIONS
-// =====================================================
-
-app.get("/api/locations", async (req, res) => {
-  try {
-    const locations =
-      await db.collection("locations")
+app.get(
+  "/api/locations",
+  async (req, res) => {
+    try {
+      const locations = await db
+        .collection("locations")
         .find({})
-        .sort({ timestamp: -1 })
+        .sort({
+          timestamp: -1,
+        })
         .toArray();
 
+      res.json({
+        success: true,
+        locations,
+      });
+    } catch (error) {
+      console.error(
+        "Get locations error:",
+        error
+      );
 
-    res.json({
-      success: true,
-      locations,
-    });
-  } catch (error) {
-    console.error(
-      "Get locations error:",
-      error
-    );
-
-    res.status(500).json({
-      success: false,
-      message:
-        "Server error while fetching locations",
-    });
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to load locations",
+        error: error.message,
+      });
+    }
   }
-});
+);
 
-
-// =====================================================
+// ======================================================
 // START SERVER
-// =====================================================
+// ======================================================
 
 async function startServer() {
-  await connectDatabase();
-
-  app.listen(PORT, () => {
-    console.log(
-      `Server running on http://localhost:${PORT}`
+  try {
+    const client = new MongoClient(
+      MONGO_URI
     );
-  });
+
+    await client.connect();
+
+    console.log(
+      "MongoDB connected successfully"
+    );
+
+    db = client.db(DB_NAME);
+
+    console.log(
+      `Database: ${DB_NAME}`
+    );
+
+    app.listen(
+      PORT,
+      () => {
+        console.log(
+          `Server running on http://localhost:${PORT}`
+        );
+      }
+    );
+  } catch (error) {
+    console.error(
+      "Failed to start server:"
+    );
+
+    console.error(error);
+  }
 }
 
 startServer();
