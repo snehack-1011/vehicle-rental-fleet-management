@@ -1,6 +1,7 @@
 const express = require('express');
 const Reservation = require('../models/Reservation');
 const Vehicle = require('../models/Vehicle');
+const { logAudit } = require('../utils/logger');
 const router = express.Router();
 
 // POST /api/reservations - Create a new reservation with Overlap Logic & Pricing Engine
@@ -67,8 +68,11 @@ router.post('/', async (req, res) => {
        await Vehicle.findOneAndUpdate({ id: vehicleId }, { status: 'RESERVED' });
     }
 
+    await logAudit(req, 'BOOKING_CREATED', newReservation.userId, { reservationId: newReservation.id, vehicleId: vehicleId });
+
     res.status(201).json({ message: 'Reservation successful', data: newReservation });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Error creating reservation', error: err.message });
   }
 });
@@ -97,8 +101,11 @@ router.put('/:id/cancel', async (req, res) => {
     // Free up vehicle
     await Vehicle.findOneAndUpdate({ id: reservation.vehicleId }, { status: 'AVAILABLE' });
 
+    await logAudit(req, 'BOOKING_CANCELLED', reservation.userId, { reservationId: reservation.id });
+
     res.status(200).json({ message: 'Reservation cancelled', data: reservation });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'Error cancelling reservation' });
   }
 });

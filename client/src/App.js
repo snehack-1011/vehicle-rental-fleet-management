@@ -13,7 +13,18 @@ import FleetDashboard from './Frontend2/Dashboard';
 function App() {
   const user = JSON.parse(localStorage.getItem('user'));
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch('http://localhost:5000/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+      }
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = '/login';
