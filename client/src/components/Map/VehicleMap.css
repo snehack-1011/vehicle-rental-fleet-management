@@ -1,0 +1,703 @@
+/* =========================================
+   MAIN PAGE
+========================================= */
+
+.vehicle-map-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.map-header h1 {
+  margin: 0;
+  color: #172033;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.map-header p {
+  margin: 8px 0 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.refresh-map-btn,
+.simulate-btn,
+.popup-location-btn,
+.table-location-btn {
+  border: none;
+  background: #172033;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.refresh-map-btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.refresh-map-btn:hover,
+.simulate-btn:hover,
+.popup-location-btn:hover,
+.table-location-btn:hover {
+  background: #0f172a;
+}
+
+.refresh-map-btn:disabled,
+.simulate-btn:disabled,
+.popup-location-btn:disabled,
+.table-location-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   MESSAGES
+========================================= */
+
+.map-success,
+.map-error {
+  padding: 13px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.map-success {
+  background: #ecfdf3;
+  color: #087443;
+  border: 1px solid #b7ebcd;
+}
+
+.map-error {
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+
+
+/* =========================================
+   VEHICLE SELECTION
+========================================= */
+
+.map-selection-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.map-selection-card h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 20px;
+}
+
+.map-selection-card p {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.map-select {
+  min-width: 350px;
+}
+
+.map-select label {
+  display: block;
+  margin-bottom: 7px;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.map-select select {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  background: white;
+  color: #172033;
+  font-size: 14px;
+  outline: none;
+}
+
+.map-select select:focus {
+  border-color: #172033;
+}
+
+
+/* =========================================
+   VEHICLE DETAILS
+========================================= */
+
+.map-vehicle-details {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.map-vehicle-details div {
+  min-width: 0;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 13px;
+}
+
+.map-vehicle-details span {
+  display: block;
+  margin-bottom: 6px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.map-vehicle-details strong {
+  display: block;
+  color: #172033;
+  font-size: 14px;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.status-available {
+  color: #087443 !important;
+}
+
+.status-reserved {
+  color: #a16207 !important;
+}
+
+.status-rented {
+  color: #1d4ed8 !important;
+}
+
+.status-maintenance {
+  color: #be123c !important;
+}
+
+.status-damaged {
+  color: #b45309 !important;
+}
+
+.status-inspection {
+  color: #7c3aed !important;
+}
+
+.status-returned {
+  color: #475569 !important;
+}
+
+.status-default {
+  color: #374151 !important;
+}
+
+
+/* =========================================
+   MAP CARD
+========================================= */
+
+.map-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.map-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.map-card-header h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 20px;
+}
+
+.map-card-header p {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.vehicle-count {
+  min-width: 75px;
+  height: 58px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: #172033;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.vehicle-count span {
+  margin-top: 2px;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+
+/* =========================================
+   MAP
+========================================= */
+
+.map-container {
+  width: 100%;
+  height: 540px;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+
+/* =========================================
+   POPUP
+========================================= */
+
+.map-popup {
+  min-width: 260px;
+}
+
+.map-popup h3 {
+  margin: 0 0 12px;
+  color: #172033;
+  font-size: 17px;
+}
+
+.map-popup p {
+  margin: 6px 0;
+  color: #4b5563;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.map-popup strong {
+  color: #172033;
+}
+
+.popup-address {
+  padding: 8px;
+  background: #f8fafc;
+  border-radius: 6px;
+  color: #374151 !important;
+}
+
+.simulated-label {
+  padding: 7px 9px;
+  background: #fff7ed;
+  border-radius: 5px;
+  color: #9a3412 !important;
+  font-size: 12px !important;
+}
+
+.popup-location-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+
+/* =========================================
+   CURRENT LOCATION CARD
+========================================= */
+
+.current-location-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.current-location-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.current-location-header h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 20px;
+}
+
+.current-location-header p {
+  margin: 5px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.simulate-btn {
+  padding: 11px 17px;
+  border-radius: 7px;
+  font-size: 13px;
+}
+
+
+/* =========================================
+   CURRENT ADDRESS
+========================================= */
+
+.location-address {
+  margin-bottom: 18px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #edf0f4;
+  border-radius: 8px;
+}
+
+.location-address span {
+  display: block;
+  margin-bottom: 7px;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.location-address strong {
+  display: block;
+  color: #172033;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   LOCATION INFORMATION
+========================================= */
+
+.location-information {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.location-box {
+  background: #f8fafc;
+  border: 1px solid #edf0f4;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.location-box span {
+  display: block;
+  margin-bottom: 7px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.location-box strong {
+  display: block;
+  color: #172033;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+
+/* =========================================
+   TABLE CARD
+========================================= */
+
+.map-history-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.map-history-header {
+  padding: 20px 22px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.map-history-header h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 20px;
+}
+
+.map-history-header p {
+  margin: 6px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.map-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.map-table {
+  width: 100%;
+  min-width: 1150px;
+  border-collapse: collapse;
+}
+
+.map-table th {
+  padding: 13px 15px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+  color: #4b5563;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.map-table td {
+  padding: 15px;
+  border-bottom: 1px solid #eef0f3;
+  color: #374151;
+  font-size: 13px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.map-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.map-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* =========================================
+   ADDRESS CELL
+========================================= */
+
+.address-cell {
+  max-width: 300px;
+  white-space: normal !important;
+  line-height: 1.45;
+}
+
+
+/* =========================================
+   TABLE STATUS
+========================================= */
+
+.table-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #f3f4f6;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+/* =========================================
+   TABLE BUTTON
+========================================= */
+
+.table-location-btn {
+  padding: 7px 12px;
+  border-radius: 5px;
+  font-size: 11px;
+}
+
+.table-location-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.empty-map-row {
+  padding: 40px !important;
+  color: #9ca3af !important;
+  text-align: center !important;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .map-vehicle-details {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+  .location-information {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+@media (max-width: 750px) {
+
+  .vehicle-map-page {
+    padding: 20px;
+  }
+
+  .map-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .map-selection-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .map-select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .map-vehicle-details {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .current-location-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .map-container {
+    height: 450px;
+  }
+
+}
+
+
+@media (max-width: 500px) {
+
+  .vehicle-map-page {
+    padding: 15px;
+  }
+
+  .map-header h1 {
+    font-size: 24px;
+  }
+
+  .map-vehicle-details {
+    grid-template-columns: 1fr;
+  }
+
+  .location-information {
+    grid-template-columns: 1fr;
+  }
+
+  .map-card-header {
+    align-items: flex-start;
+  }
+
+  .map-card-header h2 {
+    font-size: 18px;
+  }
+
+}
+
+/* =========================================
+   LIVE TRACKING INDICATOR
+========================================= */
+
+.live-tracking-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.live-dot {
+  color: #10b981;
+  font-size: 14px;
+  animation: pulse-dot 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

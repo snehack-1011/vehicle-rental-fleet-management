@@ -1,0 +1,1120 @@
+/* =========================================
+   GLOBAL BILLING RESET
+========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* =========================================
+   BILLING PAGE
+========================================= */
+
+.billing-page {
+  width: 100%;
+  max-width: 100%;
+
+  min-height: calc(100vh - 64px);
+
+  background: #f5f7fb;
+
+  padding: 35px 40px;
+
+  box-sizing: border-box;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  color: #172033;
+
+  overflow-x: hidden;
+}
+
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+.billing-header {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 30px;
+}
+
+.billing-header h1 {
+  margin: 0 0 8px;
+
+  font-size: 32px;
+  font-weight: 700;
+
+  color: #172033;
+}
+
+.billing-header p {
+  margin: 0;
+
+  color: #718096;
+
+  font-size: 15px;
+}
+
+/* =========================================
+   CREATE INVOICE BUTTON
+========================================= */
+
+.add-invoice-btn {
+  border: none;
+
+  background: #1f2937;
+  color: white;
+
+  padding: 12px 20px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.add-invoice-btn:hover {
+  background: #111827;
+
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   SUMMARY CARDS
+========================================= */
+
+.billing-summary {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 20px;
+
+  margin-bottom: 30px;
+}
+
+.billing-card {
+  min-width: 0;
+
+  background: white;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 12px;
+
+  padding: 22px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.billing-card span {
+  display: block;
+
+  color: #718096;
+
+  font-size: 14px;
+
+  margin-bottom: 10px;
+}
+
+.billing-card strong {
+  display: block;
+
+  font-size: 25px;
+
+  color: #172033;
+
+  word-break: break-word;
+}
+
+/* =========================================
+   SUCCESS MESSAGE
+========================================= */
+
+.success-message {
+  width: 100%;
+
+  background: #ecfdf3;
+
+  border: 1px solid #bbf7d0;
+
+  color: #166534;
+
+  padding: 12px 16px;
+
+  border-radius: 8px;
+
+  margin-bottom: 20px;
+
+  font-size: 14px;
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   ERROR MESSAGE
+========================================= */
+
+.error-message {
+  width: 100%;
+
+  background: #fef2f2;
+
+  border: 1px solid #fecaca;
+
+  color: #b91c1c;
+
+  padding: 12px 16px;
+
+  border-radius: 8px;
+
+  margin-bottom: 20px;
+
+  font-size: 14px;
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   INVOICE SECTION
+========================================= */
+
+.billing-section {
+  width: 100%;
+
+  background: white;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 12px;
+
+  padding: 25px;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04);
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+/* =========================================
+   SECTION HEADER
+========================================= */
+
+.billing-section-header {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  margin-bottom: 22px;
+}
+
+.billing-section-header h2 {
+  margin: 0 0 5px;
+
+  font-size: 21px;
+
+  color: #172033;
+}
+
+.billing-section-header p {
+  margin: 0;
+
+  font-size: 14px;
+
+  color: #718096;
+}
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.invoice-search {
+  width: 300px;
+  max-width: 100%;
+
+  padding: 11px 14px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  font-size: 14px;
+
+  font-family: inherit;
+
+  background: white;
+}
+
+.invoice-search:focus {
+  border-color: #4b5563;
+
+  box-shadow:
+    0 0 0 2px rgba(75, 85, 99, 0.08);
+}
+
+/* =========================================
+   TABLE WRAPPER
+========================================= */
+
+.billing-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  overflow-y: hidden;
+
+  border-radius: 8px;
+
+  -webkit-overflow-scrolling: touch;
+}
+
+/* =========================================
+   TABLE
+========================================= */
+
+.billing-table {
+  width: 100%;
+
+  min-width: 1000px;
+
+  border-collapse: collapse;
+
+  table-layout: auto;
+}
+
+/* =========================================
+   TABLE HEADER
+========================================= */
+
+.billing-table thead {
+  background: #f8fafc;
+}
+
+.billing-table th {
+  padding: 14px 12px;
+
+  text-align: left;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  color: #475569;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  white-space: nowrap;
+}
+
+/* =========================================
+   TABLE BODY
+========================================= */
+
+.billing-table td {
+  padding: 16px 12px;
+
+  font-size: 14px;
+
+  color: #374151;
+
+  border-bottom: 1px solid #edf0f4;
+
+  vertical-align: middle;
+}
+
+.billing-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.billing-table tbody tr:hover {
+  background: #fafbfc;
+}
+
+.billing-table td strong {
+  color: #172033;
+}
+
+.billing-table td small {
+  display: block;
+
+  color: #718096;
+
+  font-size: 12px;
+
+  margin-top: 4px;
+}
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.invoice-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  flex-wrap: wrap;
+}
+
+.invoice-actions button {
+  border: none;
+
+  padding: 7px 11px;
+
+  border-radius: 6px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+
+.invoice-actions button:hover {
+  transform: translateY(-1px);
+}
+
+/* VIEW */
+
+.view-btn {
+  background: #eef2ff;
+
+  color: #4338ca;
+}
+
+.view-btn:hover {
+  background: #e0e7ff;
+}
+
+/* EDIT */
+
+.edit-btn {
+  background: #fff7ed;
+
+  color: #c2410c;
+}
+
+.edit-btn:hover {
+  background: #ffedd5;
+}
+
+/* PRINT */
+
+.print-btn {
+  background: #f1f5f9;
+
+  color: #334155;
+}
+
+.print-btn:hover {
+  background: #e2e8f0;
+}
+
+/* DELETE */
+
+.delete-btn {
+  background: #fef2f2;
+
+  color: #dc2626;
+}
+
+.delete-btn:hover {
+  background: #fee2e2;
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-invoices {
+  text-align: center;
+
+  padding: 60px 20px;
+
+  border: 1px dashed #d1d5db;
+
+  border-radius: 10px;
+
+  background: #fafafa;
+}
+
+.empty-invoices h3 {
+  margin: 0 0 8px;
+
+  color: #374151;
+}
+
+.empty-invoices p {
+  margin: 0;
+
+  color: #718096;
+}
+
+/* =========================================
+   MODAL OVERLAY
+========================================= */
+
+.billing-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background:
+    rgba(15, 23, 42, 0.55);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 25px;
+
+  z-index: 1000;
+
+  overflow-y: auto;
+}
+
+/* =========================================
+   MODAL
+========================================= */
+
+.billing-modal {
+  width: 100%;
+
+  max-width: 900px;
+
+  max-height: 90vh;
+
+  overflow-y: auto;
+
+  background: white;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.2);
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   MODAL HEADER
+========================================= */
+
+.modal-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: flex-start;
+
+  gap: 20px;
+
+  padding: 24px 28px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  position: sticky;
+
+  top: 0;
+
+  background: white;
+
+  z-index: 2;
+}
+
+.modal-header h2 {
+  margin: 0 0 5px;
+
+  font-size: 22px;
+
+  color: #172033;
+}
+
+.modal-header p {
+  margin: 0;
+
+  color: #718096;
+
+  font-size: 13px;
+}
+
+/* =========================================
+   CLOSE BUTTON
+========================================= */
+
+.modal-close {
+  border: none;
+
+  background: #f1f5f9;
+
+  width: 34px;
+  height: 34px;
+
+  border-radius: 50%;
+
+  font-size: 22px;
+
+  line-height: 1;
+
+  color: #475569;
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+}
+
+.modal-close:hover {
+  background: #e2e8f0;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.billing-form {
+  padding: 28px;
+}
+
+/* =========================================
+   FORM SECTION
+========================================= */
+
+.form-section {
+  margin-bottom: 28px;
+}
+
+.form-section h3 {
+  margin: 0 0 16px;
+
+  font-size: 16px;
+
+  color: #172033;
+
+  padding-bottom: 10px;
+
+  border-bottom: 1px solid #edf0f4;
+}
+
+/* =========================================
+   FORM GRID
+========================================= */
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+/* =========================================
+   FORM GROUP
+========================================= */
+
+.form-group {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.form-group label {
+  font-size: 13px;
+
+  font-weight: 600;
+
+  color: #475569;
+}
+
+.form-group input,
+.form-group select,
+.billing-form textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 11px 12px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 8px;
+
+  outline: none;
+
+  font-size: 14px;
+
+  font-family: inherit;
+
+  background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.billing-form textarea:focus {
+  border-color: #4b5563;
+
+  box-shadow:
+    0 0 0 2px rgba(75, 85, 99, 0.08);
+}
+
+.form-group input[readonly] {
+  background: #f8fafc;
+
+  color: #64748b;
+}
+
+/* =========================================
+   SELECT
+========================================= */
+
+.form-group select {
+  cursor: pointer;
+}
+
+/* =========================================
+   TOTAL
+========================================= */
+
+.invoice-total {
+  margin-top: 20px;
+
+  padding: 18px 20px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 10px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+}
+
+.invoice-total span {
+  font-size: 15px;
+
+  font-weight: 600;
+
+  color: #475569;
+}
+
+.invoice-total strong {
+  font-size: 24px;
+
+  color: #172033;
+
+  white-space: nowrap;
+}
+
+/* =========================================
+   MODAL ACTIONS
+========================================= */
+
+.modal-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding-top: 10px;
+}
+
+.cancel-btn,
+.save-btn {
+  border: none;
+
+  padding: 11px 18px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #f1f5f9;
+
+  color: #475569;
+}
+
+.cancel-btn:hover {
+  background: #e2e8f0;
+}
+
+.save-btn {
+  background: #1f2937;
+
+  color: white;
+}
+
+.save-btn:hover {
+  background: #111827;
+}
+
+/* =========================================
+   LARGE PRINT BUTTON
+========================================= */
+
+.print-btn.large {
+  border: none;
+
+  padding: 11px 18px;
+
+  border-radius: 8px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+/* =========================================
+   VIEW INVOICE
+========================================= */
+
+.invoice-view {
+  padding: 28px;
+}
+
+/* =========================================
+   INVOICE INFORMATION
+========================================= */
+
+.invoice-info-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-bottom: 28px;
+}
+
+.invoice-info-grid > div {
+  background: #f8fafc;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 9px;
+
+  padding: 15px;
+
+  min-width: 0;
+}
+
+.invoice-info-grid span,
+.invoice-charges span,
+.view-notes span {
+  display: block;
+
+  color: #718096;
+
+  font-size: 12px;
+
+  margin-bottom: 6px;
+}
+
+.invoice-info-grid strong {
+  color: #172033;
+
+  font-size: 14px;
+
+  word-break: break-word;
+}
+
+/* =========================================
+   INVOICE CHARGES
+========================================= */
+
+.invoice-charges {
+  border-top: 1px solid #e5e7eb;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  padding: 10px 0;
+}
+
+.invoice-charges > div {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 11px 0;
+}
+
+.invoice-charges strong {
+  color: #172033;
+
+  white-space: nowrap;
+}
+
+/* =========================================
+   VIEW TOTAL
+========================================= */
+
+.view-total {
+  margin-top: 20px;
+
+  padding: 18px;
+
+  background: #f8fafc;
+
+  border-radius: 10px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+}
+
+.view-total span {
+  font-weight: 700;
+
+  color: #475569;
+}
+
+.view-total strong {
+  font-size: 25px;
+
+  color: #172033;
+
+  white-space: nowrap;
+}
+
+/* =========================================
+   NOTES
+========================================= */
+
+.view-notes {
+  margin-top: 20px;
+
+  padding: 15px;
+
+  background: #fafafa;
+
+  border-radius: 8px;
+}
+
+.view-notes p {
+  margin: 0;
+
+  color: #475569;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+
+  word-break: break-word;
+}
+
+/* =========================================
+   TABLET RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+
+  .billing-page {
+    padding: 30px 25px;
+  }
+
+  .billing-summary {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .billing-card:last-child {
+    grid-column: span 2;
+  }
+}
+
+/* =========================================
+   MOBILE RESPONSIVE
+========================================= */
+
+@media (max-width: 700px) {
+
+  .billing-page {
+    padding: 25px 15px;
+  }
+
+  .billing-header {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .billing-header h1 {
+    font-size: 27px;
+  }
+
+  .add-invoice-btn {
+    width: 100%;
+  }
+
+  .billing-summary {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+  .billing-card:last-child {
+    grid-column: auto;
+  }
+
+  .billing-section {
+    padding: 18px;
+  }
+
+  .billing-section-header {
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .invoice-search {
+    width: 100%;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .invoice-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .billing-form,
+  .invoice-view {
+    padding: 20px;
+  }
+
+  .billing-modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-header {
+    padding: 20px;
+  }
+
+  .invoice-total,
+  .view-total {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+
+    align-items: stretch;
+  }
+
+  .modal-actions button {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 450px) {
+
+  .billing-page {
+    padding: 20px 10px;
+  }
+
+  .billing-header h1 {
+    font-size: 24px;
+  }
+
+  .billing-section {
+    padding: 14px;
+  }
+
+  .billing-card {
+    padding: 18px;
+  }
+
+  .billing-card strong {
+    font-size: 22px;
+  }
+
+  .billing-form,
+  .invoice-view {
+    padding: 16px;
+  }
+
+  .modal-header {
+    padding: 16px;
+  }
+}

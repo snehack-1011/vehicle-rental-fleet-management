@@ -1,0 +1,112 @@
+/* =========================================
+   GLOBAL NAVIGATION
+========================================= */
+
+.navigation {
+  width: 100%;
+  min-height: 64px;
+  padding: 0 32px;
+  background: #222222;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* =========================================
+   LOGO
+========================================= */
+
+.nav-logo {
+  color: white;
+  font-size: 21px;
+  font-weight: 700;
+
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* =========================================
+   NAVIGATION LINKS
+========================================= */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 22px;
+
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  white-space: nowrap;
+
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #d1d5db;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1050px) {
+
+  .navigation {
+    padding: 12px 20px;
+  }
+
+  .nav-links {
+    gap: 15px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+  .navigation {
+    min-height: auto;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    padding: 15px 20px;
+
+    gap: 12px;
+  }
+
+  .nav-links {
+    width: 100%;
+
+    justify-content: center;
+
+    gap: 12px 18px;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+  }
+}
