@@ -136,7 +136,7 @@ router.post('/', auth, async (req, res) => {
 // GET /api/reservations - Fetch reservations
 router.get('/', async (req, res) => {
   try {
-    const reservations = await Reservation.find().sort({ createdAt: -1 });
+    const reservations = await Reservation.find().populate('userId', 'fullName email phone role').sort({ createdAt: -1 });
     res.status(200).json({ data: reservations });
   } catch (err) {
     res.status(500).json({ message: 'Error fetching reservations' });

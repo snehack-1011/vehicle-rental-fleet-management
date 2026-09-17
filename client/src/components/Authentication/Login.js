@@ -25,9 +25,9 @@ const Login = () => {
             localStorage.setItem('user', JSON.stringify(data.result));
             
             const userRole = data.result.role;
-            if (userRole === 'CUSTOMER') window.location.href = '/customer';
-            else if (userRole === 'FLEET_MANAGER') window.location.href = '/fleet';
-            else if (userRole === 'ADMIN') window.location.href = '/admin';
+            if (userRole === 'CUSTOMER') navigate('/customer');
+            else if (userRole === 'FLEET_MANAGER') navigate('/fleet');
+            else if (userRole === 'ADMIN') navigate('/admin');
         } catch (err) {
             setError(err.response?.data?.message || 'Something went wrong. Please check your credentials.');
         }

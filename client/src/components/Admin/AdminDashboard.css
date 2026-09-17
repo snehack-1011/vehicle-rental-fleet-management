@@ -1,77 +1,138 @@
 .admin-dashboard {
-  background: linear-gradient(135deg, #f5f7fb 0%, #e4e9f2 100%);
-  height: calc(100vh - 54px);
-  overflow-y: auto;
-  padding: 32px 40px 50px;
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #1e293b;
+  padding: 32px 40px 60px;
   box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
+/* HEADER BANNER */
 .admin-header {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 28px 32px;
-  margin-bottom: 24px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 32px 36px;
+  margin-bottom: 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 6px 25px rgba(15, 23, 42, 0.12);
+}
+
+.admin-portal-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #93c5fd;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
 }
 
 .admin-header h1 {
   margin: 0;
-  color: #111827;
+  color: #ffffff;
   font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .admin-header p {
-  margin: 7px 0 0;
-  color: #64748b;
+  margin: 6px 0 0;
+  color: #cbd5e1;
   font-size: 15px;
 }
 
 .add-vehicle-btn {
   border: none;
-  background: #111827;
+  background: #2563eb;
   color: white;
-  padding: 13px 20px;
-  border-radius: 9px;
+  padding: 13px 22px;
+  border-radius: 10px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  white-space: nowrap;
 }
 
 .add-vehicle-btn:hover {
-  background: #1f2937;
+  background: #1d4ed8;
+  transform: translateY(-1px);
 }
 
+/* MESSAGES */
 .admin-message,
 .admin-error {
-  padding: 13px 16px;
-  border-radius: 9px;
-  margin-bottom: 20px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  margin-bottom: 24px;
   font-size: 14px;
+  font-weight: 600;
 }
 
 .admin-message {
   background: #ecfdf5;
-  border: 1px solid #bbf7d0;
-  color: #166534;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
 }
 
 .admin-error {
   background: #fff1f2;
   border: 1px solid #fecdd3;
-  color: #be123c;
+  color: #9f1239;
 }
 
+/* METRICS GRID */
 .dashboard-metrics {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 18px;
-  margin-bottom: 18px;
+  margin-bottom: 24px;
 }
+
+.metric-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-card span {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.metric-card strong {
+  color: #0f172a;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.metric-foot {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+.card-green { border-top: 3px solid #10b981; }
+.card-blue { border-top: 3px solid #2563eb; }
+.card-red { border-top: 3px solid #ef4444; }
+.card-purple { border-top: 3px solid #8b5cf6; }
 
 .secondary-metrics {
   display: grid;
@@ -80,102 +141,126 @@
   margin-bottom: 28px;
 }
 
-.metric-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 13px;
-  padding: 22px;
-  min-height: 105px;
-  box-sizing: border-box;
-  box-shadow: 0 3px 14px rgba(15, 23, 42, 0.04);
+.metric-card.mini {
+  padding: 16px 20px;
 }
 
-.metric-card span {
-  display: block;
-  color: #64748b;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .5px;
-  text-transform: uppercase;
-  margin-bottom: 13px;
+.metric-card.mini strong {
+  font-size: 20px;
 }
 
-.metric-card strong {
-  color: #111827;
-  font-size: 26px;
+/* CHARTS GRID */
+.admin-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 30px;
 }
 
+/* VEHICLE MANAGEMENT CONTAINER */
 .vehicle-management {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 26px;
-  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
-}
-
-.vehicle-management-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 22px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
 }
 
 .vehicle-management-header h2 {
   margin: 0;
-  color: #111827;
+  color: #0f172a;
   font-size: 22px;
+  font-weight: 800;
 }
 
 .vehicle-management-header p {
-  margin: 5px 0 0;
+  margin: 4px 0 20px;
   color: #64748b;
   font-size: 14px;
 }
 
-.vehicle-count {
-  background: #f1f5f9;
-  color: #334155;
-  padding: 8px 13px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+/* TAB NAVIGATION FOR RENTAL VS SALE */
+.inventory-nav-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 22px;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 12px;
 }
 
+.inv-tab-btn {
+  padding: 10px 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.inv-tab-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.inv-tab-btn.active {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.inv-tab-btn.active.purple {
+  background: #f3e8ff;
+  border-color: #8b5cf6;
+  color: #7c3aed;
+}
+
+.inv-tab-btn.active.grey {
+  background: #f1f5f9;
+  border-color: #475569;
+  color: #0f172a;
+}
+
+/* FILTERS */
 .vehicle-filters {
   display: grid;
-  grid-template-columns: 1fr 210px 210px;
-  gap: 12px;
-  margin-bottom: 20px;
+  grid-template-columns: 1fr 220px 220px;
+  gap: 14px;
+  margin-bottom: 22px;
 }
 
 .vehicle-search,
 .vehicle-filter {
   height: 45px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: white;
-  color: #374151;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #1e293b;
   font-size: 14px;
-  padding: 0 13px;
+  padding: 0 14px;
   outline: none;
   box-sizing: border-box;
 }
 
 .vehicle-search:focus,
 .vehicle-filter:focus {
-  border-color: #64748b;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+/* TABLE */
 .vehicle-table-wrapper {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
 }
 
 .vehicle-table {
   width: 100%;
-  min-width: 900px;
+  min-width: 950px;
   border-collapse: collapse;
 }
 
@@ -185,117 +270,100 @@
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 14px 15px;
+  letter-spacing: 0.05em;
+  padding: 14px 16px;
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 .vehicle-table td {
-  padding: 15px;
-  color: #374151;
-  font-size: 13px;
-  border-bottom: 1px solid #eef2f7;
+  padding: 16px;
+  color: #334155;
+  font-size: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
 }
 
 .vehicle-table tbody tr:hover {
-  background: #fafafa;
+  background: #f8fafc;
 }
 
 .vehicle-id {
-  color: #111827;
-  font-weight: 700;
+  color: #2563eb;
+  font-weight: 800;
 }
 
+/* STATUS BADGES */
 .status-badge {
   display: inline-flex;
-  padding: 5px 10px;
-  border-radius: 20px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.status-available { background: #dcfce7; color: #166534; }
+.status-reserved { background: #fef3c7; color: #92400e; }
+.status-rented { background: #dbeafe; color: #1e40af; }
+.status-maintenance { background: #fee2e2; color: #991b1b; }
+.status-sale { background: #f3e8ff; color: #6b21a8; }
+.status-damaged { background: #ffedd5; color: #9a3412; }
+.status-default { background: #f1f5f9; color: #475569; }
+
+.class-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
   font-size: 11px;
   font-weight: 700;
 }
 
-.status-available {
-  background: #ecfdf5;
-  color: #047857;
-}
+.rental-class { background: #eff6ff; color: #1d4ed8; }
+.sale-class { background: #f3e8ff; color: #7c3aed; }
 
-.status-reserved {
-  background: #fffbeb;
-  color: #a16207;
-}
-
-.status-rented {
-  background: #eff6ff;
-  color: #1d4ed8;
-}
-
-.status-maintenance {
-  background: #fff1f2;
-  color: #be123c;
-}
-
-.status-damaged {
-  background: #fff7ed;
-  color: #c2410c;
-}
-
-.status-inspection {
-  background: #f5f3ff;
-  color: #6d28d9;
-}
-
+/* ACTION BUTTONS */
 .action-buttons {
   display: flex;
-  gap: 7px;
+  gap: 6px;
 }
 
 .view-btn,
 .edit-btn,
+.sale-btn,
 .delete-btn {
   border: none;
-  border-radius: 6px;
+  border-radius: 7px;
   padding: 7px 11px;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
 }
 
-.view-btn {
-  background: #f1f5f9;
-  color: #334155;
-}
+.view-btn { background: #f1f5f9; color: #334155; }
+.edit-btn { background: #eff6ff; color: #1d4ed8; }
+.delete-btn { background: #fff1f2; color: #be123c; }
 
-.edit-btn {
-  background: #eff6ff;
-  color: #1d4ed8;
-}
+.btn-to-sale { background: #f3e8ff; color: #7c3aed; }
+.btn-to-rental { background: #dcfce7; color: #15803d; }
 
-.delete-btn {
-  background: #fff1f2;
-  color: #be123c;
-}
-
-.view-btn:hover {
-  background: #e2e8f0;
-}
-
-.edit-btn:hover {
-  background: #dbeafe;
-}
-
-.delete-btn:hover {
-  background: #ffe4e6;
-}
+.view-btn:hover { background: #e2e8f0; }
+.edit-btn:hover { background: #dbeafe; }
+.delete-btn:hover { background: #ffe4e6; }
+.btn-to-sale:hover { background: #e9d5ff; }
+.btn-to-rental:hover { background: #bbf7d0; }
 
 .empty-state {
-  padding: 55px 20px;
+  padding: 60px 20px;
   text-align: center;
   color: #94a3b8;
 }
 
 .empty-state h3 {
   margin: 0 0 6px;
-  color: #475569;
+  color: #334155;
 }
 
 .empty-state p {
@@ -303,10 +371,12 @@
   font-size: 13px;
 }
 
+/* MODAL */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, .55);
+  background: rgba(15, 23, 42, .6);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -319,43 +389,45 @@
   max-height: 90vh;
   overflow-y: auto;
   background: white;
-  border-radius: 15px;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, .25);
+  border-radius: 18px;
+  box-shadow: 0 25px 50px rgba(15, 23, 42, .25);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 22px 26px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .modal-header h2 {
   margin: 0;
-  color: #111827;
+  color: #0f172a;
   font-size: 20px;
+  font-weight: 800;
 }
 
 .close-btn {
   width: 32px;
   height: 32px;
   border: none;
-  border-radius: 7px;
+  border-radius: 8px;
   background: #f1f5f9;
   color: #475569;
   cursor: pointer;
   font-size: 18px;
+  font-weight: 700;
 }
 
 .vehicle-form {
-  padding: 24px;
+  padding: 26px;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 17px;
+  gap: 18px;
 }
 
 .form-group {
@@ -365,19 +437,19 @@
 }
 
 .form-group label {
-  color: #374151;
+  color: #475569;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
   height: 43px;
-  border: 1px solid #d1d5db;
-  border-radius: 7px;
-  padding: 0 12px;
-  color: #111827;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 13px;
+  color: #0f172a;
   background: white;
   font-size: 14px;
   outline: none;
@@ -386,24 +458,25 @@
 
 .form-group input:focus,
 .form-group select:focus {
-  border-color: #64748b;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  padding: 17px 24px;
-  border-top: 1px solid #e5e7eb;
+  gap: 12px;
+  padding: 18px 26px;
+  border-top: 1px solid #e2e8f0;
 }
 
 .cancel-btn,
 .save-btn {
   border: none;
-  border-radius: 7px;
-  padding: 10px 17px;
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -413,20 +486,38 @@
 }
 
 .save-btn {
-  background: #111827;
+  background: #2563eb;
   color: white;
 }
 
+.save-btn:hover {
+  background: #1d4ed8;
+}
+
 .vehicle-details {
-  padding: 24px;
+  padding: 26px;
+}
+
+.view-img-wrapper {
+  width: 100%;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.view-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  padding: 13px 0;
-  border-bottom: 1px solid #eef2f7;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .detail-row span {
@@ -435,60 +526,46 @@
 }
 
 .detail-row strong {
-  color: #111827;
+  color: #0f172a;
   font-size: 14px;
-  text-align: right;
 }
 
 @media (max-width: 1200px) {
   .dashboard-metrics {
     grid-template-columns: repeat(3, 1fr);
   }
-
   .secondary-metrics {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .admin-charts-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 850px) {
   .admin-dashboard {
-    padding: 25px 20px;
+    padding: 24px 18px;
   }
-
   .admin-header {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .vehicle-filters {
     grid-template-columns: 1fr;
   }
-
   .dashboard-metrics {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .inventory-nav-tabs {
+    flex-direction: column;
   }
 }
 
 @media (max-width: 600px) {
-  .admin-dashboard {
-    padding: 18px 14px;
-  }
-
   .dashboard-metrics,
   .secondary-metrics {
     grid-template-columns: 1fr;
   }
-
-  .vehicle-management {
-    padding: 18px;
-  }
-
-  .vehicle-management-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
   .form-grid {
     grid-template-columns: 1fr;
   }

@@ -9,6 +9,7 @@ router.get('/dashboard', async (req, res) => {
     const reservedVehicles = await Vehicle.countDocuments({ status: 'RESERVED' });
     const rentedVehicles = await Vehicle.countDocuments({ status: 'RENTED' });
     const maintenanceVehicles = await Vehicle.countDocuments({ status: 'MAINTENANCE' });
+    const forSaleVehicles = await Vehicle.countDocuments({ status: 'FOR_SALE' });
 
     res.status(200).json({
       totalVehicles,
@@ -16,6 +17,7 @@ router.get('/dashboard', async (req, res) => {
       reservedVehicles,
       rentedVehicles,
       maintenanceVehicles,
+      forSaleVehicles,
       dailyRevenue: rentedVehicles * 2500, // mock calculation based on rent
       monthlyRevenue: rentedVehicles * 2500 * 30, // mock calculation
       maintenanceCost: maintenanceVehicles * 5000,
