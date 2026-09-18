@@ -80,7 +80,7 @@ router.post('/login', loginValidation, async (req, res) => {
     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
     await logAudit(req, 'LOGIN_SUCCESS', user._id, { email: user.email, role: user.role });
 
-    res.status(200).json({ result: { id: user._id, email: user.email, role: user.role }, token });
+    res.status(200).json({ result: { id: user._id, fullName: user.fullName, email: user.email, role: user.role }, token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error', error: error.message });
